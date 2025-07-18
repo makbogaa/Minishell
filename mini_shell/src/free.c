@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:23:54 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/17 19:01:39 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/18 17:07:38 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,4 +91,35 @@ char	*ft_strjoin_free(char *s1, const char *s2)
 	return (result);
 }
 
+char	*set_and_free(char *dest, char *src)
+{
+	if(dest)
+		free(dest);
+	if (!src)
+		return (NULL);
+	return (src);
+}
+void free_options(t_shell *shell)
+{
+	int i;
 
+	i = 0;
+	if (shell->options)
+	{
+		while (shell->options[i])
+		{
+			free(shell->options[i]);
+			i++;
+		}
+		free(shell->options);
+	}
+}
+
+void free_quote(t_quote *quote)
+{
+	if (!quote)
+		return;
+	free(quote->current_parameter);
+	free_multiple_input(quote->parameters);
+	free(quote);
+}
