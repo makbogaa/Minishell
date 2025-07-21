@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/18 18:23:22 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/07/21 20:48:55 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ typedef struct s_command
 // Shell yapıları
 typedef struct s_shell
 {
-	char	*builtin[1];
+	char	**builtin;
 	char	*prompt;
 	char	**envp;
 	char	*current_dir;
@@ -89,12 +89,12 @@ typedef struct s_read_file_info
 	char	*result;
 }t_read_file;
 
+//SHELL
 void	init_shell(t_shell *shell, char **envp);
 void	start_minishell(t_shell *shell);
 void	get_display_info(t_shell *shell);
 void	get_hostname(t_shell *shell);
 int		open_file(char *filename, int flags);
-
 
 //PARSER
 void	get_prompt(t_shell *shell);
@@ -107,6 +107,7 @@ char 	*get_characters(char **prompt);
 char 	*expand_if_dollar(const char *str, int *i);
 char *get_next_char(const char *str, int *i);
 char	*string_concatation_heap(char **str);
+
 //FREE
 void 	free_argv(char **argv);
 void	free_shell(t_shell *shell);
@@ -135,10 +136,14 @@ char	**mini_unsetenv(char *key, char **envp);
 char	**ft_double_extension(char **matrix, char *new_str);
 char	*ft_strjoin_3(const char *s1, const char *s2, const char *s3);
 
+//EXECUTE
 void execute_commands(t_shell *shell, char **commands, int n);
+void	run_commands(t_shell *shell);
+char	*get_path(char *cmd, char **envp);
 
 //UTILS
 char	*string_concatation(char **str);
+
 //ERROR
 void exit_with_error(char *msg);
 #endif

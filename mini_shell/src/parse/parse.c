@@ -3,111 +3,88 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/07/18 18:55:05 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/07/21 20:32:04 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void append_command(t_shell *shell, char *str, t_command **temp)
+void print_status(t_shell *shell)
 {
-    int i = 0;
-    int is_command = 0;
+	t_command *cmd = shell->command_p;
+	t_parameters *param;
 
-    while (shell->builtin[i])
-    {
-        if (ft_strcmp(shell->builtin[i], str) == 0)
-        {
-            is_command = 1;
-            if (!shell->command_p)
-            {
-                shell->command_p = malloc(sizeof(t_command));
-                shell->command_p->command = ft_strdup(str);
-                shell->command_p->next = NULL;
-                shell->command_p->parameters_p = NULL;
-                *temp = shell->command_p;
-            }
-            else
-            {
-                (*temp)->next = malloc(sizeof(t_command));
-                (*temp)->next->command = ft_strdup(str);
-                (*temp)->next->next = NULL;
-                (*temp)->next->parameters_p = NULL;
-                *temp = (*temp)->next;
-            }
-            break; // Komut bulundu, döngüden çık
-        }
-        i++;
-    }
-    // Eğer komut değilse ve bir komut eklenmişse parametre ekle
-    if (!is_command && *temp)
-    {
-        t_parameters *new_param = malloc(sizeof(t_parameters));
-        new_param->parameter = ft_strdup(str);
-        new_param->next = NULL;
-        if (!(*temp)->parameters_p)
-            (*temp)->parameters_p = new_param;
-        else
-        {
-            t_parameters *p = (*temp)->parameters_p;
-            while (p->next)
-                p = p->next;
-            p->next = new_param;
-        }
-    }
-    if (*temp && (*temp)->command)
-    {
-		printf("%s\n", (*temp)->command);
-		t_parameters *param = (*temp)->parameters_p;
+	while (cmd)
+	{
+		if (cmd->command)
+			printf("komut: %s\n", cmd->command);
+		else
+			printf("komut: NULL\n");
+
+		param = cmd->parameters_p;
+		int i = 0;
 		while (param)
-    	{
-			param = (*temp)->parameters_p;
-			printf("%s\n",param->parameter);
+		{
+			if (param->parameter)
+				printf("arg[%d]: %s\n", i, param->parameter);
+			else
+				printf("arg[%d]: NULL\n", i);
 			param = param->next;
-    	}
+			i++;
+		}
+		cmd = cmd->next;
 	}
 }
 
-
-void parse_prompt(t_shell *shell)
+void	parse_prompt(t_shell *shell)
 {
-	char 	**temp;
-	char	*temp_prompt;
-	char	*start;
-	char	*current_option;
-	t_command *temp_p;
-	
-	temp_p = NULL;
-	temp_prompt = ft_strdup(shell->prompt);
-	start = temp_prompt;
-	temp = &temp_prompt;
-	while(*temp && **temp)
+	char	**args;
+	int		i;
+	t_command	*cmd;
+	t_parameters	*param;
+
+	args = ft_split(shell->prompt, ' '); // boşluklara göre ayır
+	if (!args)
+		return;
+	cmd = malloc(sizeof(t_command));
+	if (!cmd)
+		exit(1);
+	cmd->command = NULL;
+	cmd->parameters_p = NULL;
+	cmd->next = NULL;
+	shell->command_p = cmd;
+	i = 0;
+	while (args[i])
 	{
-		if(**temp == '\'')
+		if (i == 0) // İlk kelimeyi komut olarak al
+			cmd->command = ft_strdup(args[i]);
+		else
 		{
-			current_option = single_quote_control(temp);
-			append_command(shell,current_option,&temp_p);
-			free(current_option);
-			continue;
+			param = malloc(sizeof(t_parameters));
+			if (!param)
+				exit(1);
+			param->parameter = ft_strdup(args[i]);
+			param->next = NULL;
+			if (!cmd->parameters_p)
+				cmd->parameters_p = param; // Parametreyi ekle
+			else
+			{
+				t_parameters *iter = cmd->parameters_p;
+				while (iter->next)
+					iter = iter->next;
+				iter->next = param;
+			}
 		}
-		else if(**temp == '"')
-		{
-			current_option = double_quote_control(temp);
-			free(current_option);
-			continue;
-		}
-		else if(**temp != ' ')
-		{
-			current_option = get_characters(temp);
-			free(current_option);
-			continue;
-		}
-		(*temp)++;
+		i++;
 	}
-	free(start);
+	i = 0;
+	while (args[i])
+		free(args[i++]);
+	free(args);
+	print_status(shell);
 }
 
 void	get_hostname(t_shell *shell)
@@ -161,5 +138,8 @@ void	get_prompt(t_shell *shell)
 {
 	shell->prompt = set_and_free(shell->prompt, readline(shell->display_info));
 	if(shell->prompt && *shell->prompt)
+	{
+		add_history(shell->prompt);
 		parse_prompt(shell);
+	}		
 }

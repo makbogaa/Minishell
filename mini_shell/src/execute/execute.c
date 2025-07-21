@@ -6,11 +6,11 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:41:36 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/17 19:04:23 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/21 20:41:21 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
 
 char	*get_path(char *cmd, char **envp)
 {
@@ -31,7 +31,7 @@ char	*get_path(char *cmd, char **envp)
 	while (paths[i])
 	{
 		full_path = ft_strjoin(paths[i], "/");
-		full_path = ft_strjoin_free(full_path, cmd); // özel bir ft_strjoin_free yazabilirsin
+		full_path = ft_strjoin_free(full_path, cmd);
 		if (access(full_path, X_OK) == 0)
 			return (full_path);
 		free(full_path);
@@ -71,7 +71,6 @@ void execute_commands(t_shell *shell, char **commands, int n)
 
 	if (!commands || n < 1)
 		return;
-
 	pipefds = NULL;
 	if (n > 1)
 	{
@@ -91,7 +90,6 @@ void execute_commands(t_shell *shell, char **commands, int n)
 			i++;
 		}
 	}
-
 	i = 0;
 	while (i < n)
 	{
@@ -100,11 +98,9 @@ void execute_commands(t_shell *shell, char **commands, int n)
 		{
 			if (pipefds)
 				setup_child_fds(pipefds, n, i);
-
 			argv = ft_split(commands[i], ' ');
 			if (!argv || !argv[0])
 				exit(1);
-
 			path = get_path(argv[0], shell->envp);
 			if (!path)
 			{
@@ -126,13 +122,11 @@ void execute_commands(t_shell *shell, char **commands, int n)
 		}
 		i++;
 	}
-
 	if (pipefds)
 	{
 		close_pipes(pipefds, 2 * (n - 1));
 		free(pipefds);
 	}
-
 	i = 0;
 	while (i < n)
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   double_quote.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 20:07:25 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/07/18 17:06:54 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/07/21 20:47:20 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static char *dq_expand_and_concat(const char *str, int start, int end)
     i = start;
     while (i < end) {
         if (str[i] == '$')
-            tmp = expand_if_dollar(str, &i);
+            tmp = if_dollar(str, &i);
         else
             tmp = get_next_char(str, &i);
         result = set_and_free(result, ft_strjoin(result ? result : "", tmp));
