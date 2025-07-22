@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/07/21 20:32:04 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/22 13:36:20 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,9 @@ void	parse_prompt(t_shell *shell)
 	int		i;
 	t_command	*cmd;
 	t_parameters	*param;
+	t_parameters *iter;
 
-	args = ft_split(shell->prompt, ' '); // boşluklara göre ayır
+	args = ft_split(shell->prompt, ' ');
 	if (!args)
 		return;
 	cmd = malloc(sizeof(t_command));
@@ -72,7 +73,7 @@ void	parse_prompt(t_shell *shell)
 				cmd->parameters_p = param; // Parametreyi ekle
 			else
 			{
-				t_parameters *iter = cmd->parameters_p;
+				iter = cmd->parameters_p;
 				while (iter->next)
 					iter = iter->next;
 				iter->next = param;

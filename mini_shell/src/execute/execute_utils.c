@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 20:10:22 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/21 20:48:51 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/22 13:33:58 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void run_commands(t_shell *shell)
 	char	**pipe_commands;
 	int		i;
 	int		pipe_count;
+	char **argv;
 
 	if (!shell->command_p || !shell->command_p->command)
 		return;
@@ -71,7 +72,7 @@ void run_commands(t_shell *shell)
 	}
 	if (pipe_count == 0)
 	{
-		char **argv = ft_split(full_command, ' ');
+		argv = ft_split(full_command, ' ');
 		if (!argv || !argv[0])
 		{
 			free(full_command);
