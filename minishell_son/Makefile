@@ -7,8 +7,8 @@ SRCS = minishell.c\
 		utils/file.c\
 		utils/error.c\
 	   	src/environment.c \
-		src/execute/execute.c \
-		src/execute/execute_utils.c \
+		src/execute_commands.c \
+		src/execute.c \
 		src/builtin/builtin.c \
 		src/builtin/env.c \
 		src/builtin/cd.c \
@@ -23,6 +23,7 @@ SRCS = minishell.c\
 		src/parse/double_quote.c\
 		src/parse/single_quote.c\
 		src/parse/expand.c\
+		src/parse/append.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -31,7 +32,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 INC = -I.
 
-all: $(LIBFT) $(NAME) clean
+all: $(LIBFT) $(NAME)
 
 $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)

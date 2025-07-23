@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:27 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/22 13:45:36 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/23 16:23:44 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,19 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->current_dir = NULL;
 	shell->display_info = NULL;
     shell->command_p = NULL;
-    shell->builtin = malloc(sizeof(char *) * 2);
-	if (!shell->builtin)
-	{
-		perror("malloc");
-		exit(EXIT_FAILURE);
-	}
-	shell->builtin[0] = ft_strdup("echo");
-	if (!shell->builtin[0])
-		exit(EXIT_FAILURE);
-	shell->builtin[1] = NULL;
+    
+    // Builtin komutları başlat
+    shell->builtin[0] = ft_strdup("exit");
+	shell->builtin[1] = ft_strdup("echo");
+	shell->builtin[2] = ft_strdup("env");
+	shell->builtin[3] = ft_strdup("export");
+	shell->builtin[4] = ft_strdup("unset");
+	shell->builtin[5] = ft_strdup("pwd");
+	shell->builtin[6] = ft_strdup("cd");
+    shell->builtin[7] = NULL;
+    
+	shell->tokens[0] = ft_strdup("|");
+	shell->tokens[1] = NULL;
     get_hostname(shell);
 	///
     int	i;
@@ -60,10 +63,13 @@ void start_minishell(t_shell *shell)
 
     while (1)
     {
+        if (shell->current_dir)
+            free(shell->current_dir);
         shell->current_dir = getcwd(NULL, 0);
         get_display_info(shell);
         get_prompt(shell);
-		run_commands(shell);
+		if(shell->command_p)
+			execute(shell);
     }
 }
 
@@ -74,6 +80,8 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 
+	ft_memset(&shell, 0, sizeof(t_shell));
+	
 	init_shell(&shell, envp);
 	start_minishell(&shell);
 	free_shell(&shell);
