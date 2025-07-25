@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:20:56 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/23 19:08:07 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/25 16:16:24 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	builtin_echo(char **argv)
 	}
 	while (argv[i])
 	{
-		printf("%s", argv[i]);
+		printf("my echo: %s", argv[i]);
 		if (argv[i + 1])
 			printf(" ");
 		i++;

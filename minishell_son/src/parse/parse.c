@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/07/23 18:12:19 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/25 16:08:02 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,12 @@ void append(t_shell *shell, char *str,int *command, t_command **temp)
 	result = prompt_type_control_loop(shell->builtin, 1, str);
 	if (!*command && (result == 1 || result == 2 || result == 3))
     {
-		if(prompt_type_control_loop(shell->builtin,1,str) == 1)
-			temp_str = ft_strjoin("/bin/",str);
-		else
-			temp_str = ft_strdup(str);
-		append_command(shell, temp_str, prompt_type_control_loop(shell->builtin,1,str), temp);
-		*command = 1;
-	}
+        // Sadece komut adını bırak
+        temp_str = ft_strdup(str);
+        append_command(shell, temp_str, prompt_type_control_loop(shell->builtin,1,str), temp);
+        free(temp_str);
+        *command = 1;
+    }
     else if(prompt_type_control_loop(shell->tokens,0,str) == 4)
     {
 		append_token(str,temp);
