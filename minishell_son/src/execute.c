@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:41:36 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/25 16:13:28 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/28 14:46:12 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,8 +111,9 @@ void execute_commands(t_shell *shell, char **commands, int n)
                 cmd_path = get_path(strip_path(cmd), tmp_shell.envp);
             if (!cmd_path)
             {
+                write(2, "zsh: command not found: ", 25);
                 write(2, cmd, ft_strlen(cmd));
-                write(2, ": command not found\n", 20);
+                write(2, "\n", 1);
                 free_shell(&tmp_shell);
                 exit(127);
             }

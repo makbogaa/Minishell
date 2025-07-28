@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/07/25 16:08:02 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/28 19:35:06 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,10 @@ void append(t_shell *shell, char *str,int *command, t_command **temp)
     
 }
 
+int	is_whitespace(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
+}
 
 void parse_prompt(t_shell *shell)
 {
@@ -69,7 +73,7 @@ void parse_prompt(t_shell *shell)
 			parse_func = single_quote_control;
 		else if(*temp_prompt == '"')
 			parse_func = double_quote_control;
-		else if(*temp_prompt != ' ')
+		else if (!is_whitespace(*temp_prompt))
 			parse_func = get_characters;
 		if(parse_func)
 		{

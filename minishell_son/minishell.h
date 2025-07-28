@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/23 19:56:50 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/28 19:35:19 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ void 	append_command(t_shell *shell, char *str,int builtin, t_command **temp);
 void 	append_parameter(t_parameters *new_param, t_command **temp);
 void	append_token(char *str, t_command **temp);
 int 	prompt_type_control_loop(char **control_list,int type,char *str);
+int		is_whitespace(char c);
 
 //EXECUTE
 void 	execute(t_shell *shell);
@@ -121,6 +122,7 @@ int 	run(t_command *command,char **params,t_shell *shell);
 void 	execute_commands(t_shell *shell, char **commands, int n);
 char 	*strip_path(char *cmd);
 char 	*get_path(char *cmd, char **envp);
+int		has_slash(const char *s);
 
 //FREE
 void 	free_argv(char **argv);

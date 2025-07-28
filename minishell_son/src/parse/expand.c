@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 22:24:27 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/07/21 20:51:06 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/07/28 19:34:42 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,8 @@ char *get_characters(char **prompt)
     result = NULL;
     tmp = NULL;
     i = 0;
-    while ((*prompt)[i] && (*prompt)[i] != ' ' && (*prompt)[i] != '\'' &&
-        (*prompt)[i] != '"')
+    while ((*prompt)[i] && !is_whitespace((*prompt)[i]) &&
+       (*prompt)[i] != '\'' && (*prompt)[i] != '"')
     {
         old_i = i;
         if ((*prompt)[i] == '$')
@@ -87,6 +87,20 @@ char *get_characters(char **prompt)
         }
     }
     *prompt += i;
+	if(**prompt == '\'' && *(*prompt + 1) != '\'')
+	{
+		tmp = result;
+		result = ft_strjoin(tmp,single_quote_control(prompt));
+		if (tmp)
+			free(tmp);
+	}
+	else if(**prompt == '"' && *(*prompt + 1) != '"')
+	{
+		tmp = result;
+		result = ft_strjoin(tmp,double_quote_control(prompt));
+		if (tmp)
+			free(tmp);
+	}
     if (result == NULL)
         return (ft_strdup(""));
     return (result);

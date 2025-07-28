@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:18:27 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/23 18:44:45 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/28 19:28:18 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,34 @@ char *strip_path(char *cmd)
     return cmd;
 }
 
+int	check_pipe_syntax(char *str)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (str[i])
+	{
+		if (str[i] == '|')
+			count++;
+		else if (str[i] != ' ' && str[i] != '\t')
+			count = 0;
+		if (count > 1)
+		{
+			write(2, "zsh: parse error near `||'\n", 28);
+			return (2);
+		}
+		i++;
+	}
+	if (str[0] == '|' || str[i - 1] == '|')
+	{
+		write(2, "zsh: parse error near `|'\n", 27);
+		return (2);
+	}
+	return (0);
+}
+
 void execute(t_shell *shell)
 {
     char **params;
@@ -62,16 +90,18 @@ void execute(t_shell *shell)
 
     if (ft_strchr(shell->prompt, '|'))
     {
+        if (check_pipe_syntax(shell->prompt) != 0)
+            return;
         commands_pipes = ft_split(shell->prompt, '|');
         i_pipes = 0;
-        while (commands_pipes[i_pipes] && commands_pipes)
+        while (commands_pipes[i_pipes])
             i_pipes++;
         execute_commands(shell, commands_pipes, i_pipes);
         ft_free_split(commands_pipes);
         return;
     }
     params = get_params(shell->command_p);
-	printf("Executing command: %s\n", shell->command_p->command);
+	//printf("Executing command: %s\n", shell->command_p->command);
     if (shell->command_p->builtin == 2 || shell->command_p->builtin == 1)
 		run(shell->command_p, params,shell);
 	else if(shell->command_p->builtin == 3)
