@@ -60,6 +60,7 @@ void parse_prompt(t_shell *shell)
 	int command;
 	t_command *command_temp_p;
 
+	// printf("DEBUG: parse_prompt() called with: '%s'\n", shell->prompt); // DEBUG
 	command = 0;
 	free_command(shell);
 	command_temp_p = NULL;
@@ -68,6 +69,7 @@ void parse_prompt(t_shell *shell)
 	start = temp_prompt;
 	while(temp_prompt && *temp_prompt)
 	{
+		// printf("DEBUG: Parse loop - current char: '%c' (pos: %ld)\n", *temp_prompt, temp_prompt - start); // DEBUG
 		parse_func = NULL;
 		if(*temp_prompt == '\'')
 			parse_func = single_quote_control;
@@ -75,6 +77,11 @@ void parse_prompt(t_shell *shell)
 			parse_func = double_quote_control;
 		else if (*temp_prompt == '>' || *temp_prompt == '<')
 			parse_func = get_redirect_operator;
+		else if (*temp_prompt == '|')
+		{
+			temp_prompt++; // Pipe karakterini skip et
+			continue;
+		}
 		else if (!is_whitespace(*temp_prompt))
 			parse_func = get_characters;
 		if(parse_func)

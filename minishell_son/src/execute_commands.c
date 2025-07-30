@@ -90,8 +90,11 @@ void execute(t_shell *shell)
     int original_stdin = -1;
     int original_stdout = -1;
 
+    // printf("DEBUG: execute() called with prompt: '%s'\n", shell->prompt ? shell->prompt : "NULL"); // DEBUG
+
     if (ft_strchr(shell->prompt, '|'))
     {
+        // printf("DEBUG: Pipe detected, executing pipe commands\n"); // DEBUG
         if (check_pipe_syntax(shell->prompt) != 0)
             return;
         commands_pipes = ft_split(shell->prompt, '|');
@@ -164,6 +167,40 @@ void execute(t_shell *shell)
             dup2(original_stdout, STDOUT_FILENO);
             close(original_stdout);
         }
+    }
+}
+
+void execute_single_command(t_shell *shell)
+{
+    char **params;
+    char *cmd_name;
+
+    if (!shell || !shell->command_p)
+        return;
+    
+    params = get_params(shell->command_p);
+    if (shell->command_p->builtin == 2 || shell->command_p->builtin == 1)
+        run(shell->command_p, params, shell);
+    else if(shell->command_p->builtin == 3)
+    {
+        cmd_name = strip_path(shell->command_p->command);
+        if (ft_strcmp(cmd_name, "echo") == 0)
+            builtin_echo(params);
+        else if(ft_strcmp(cmd_name,"pwd") == 0)
+            builtin_pwd();
+        else if(ft_strcmp(cmd_name,"exit") == 0)
+            builtin_exit(params);
+        else if(ft_strcmp(cmd_name,"env") == 0)
+            builtin_env(shell->envp);
+        else if(ft_strcmp(cmd_name,"cd") == 0)
+            builtin_cd(shell, params);
+        else if (ft_strcmp(cmd_name, "export") == 0)
+            builtin_export(&shell->envp, params);
+        else if (ft_strcmp(cmd_name, "unset") == 0)
+            builtin_unset(shell, params[1]);
+        else
+            printf("command not found: %s\n", cmd_name);
+        free(params);
     }
 }
 

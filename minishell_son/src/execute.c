@@ -72,6 +72,10 @@ void execute_commands(t_shell *shell, char **commands, int n)
     pid_t pid;
     int i;
 
+    // printf("DEBUG: execute_commands called with %d commands\n", n); // DEBUG
+    // for (int j = 0; j < n; j++)
+    //     printf("DEBUG: Command %d: '%s'\n", j, commands[j]); // DEBUG
+
     if (n > 1)
     {
         pipefds = malloc(sizeof(int) * 2 * (n - 1));
@@ -103,9 +107,8 @@ void execute_commands(t_shell *shell, char **commands, int n)
             tmp_shell.prompt = ft_strdup(commands[i]);
             parse_prompt(&tmp_shell);
             
-            // Pipe child process'te sadece basit execution yap, recursive execute() çağırma
-            tmp_shell.prompt = NULL; // Pipe flag'ini temizle
-            execute(&tmp_shell);
+            // Pipe child process'te direkt command execution yap, execute() çağırma
+            execute_single_command(&tmp_shell);
             
             free_shell(&tmp_shell);
             exit(0);

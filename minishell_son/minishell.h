@@ -138,6 +138,7 @@ int		is_whitespace(char c);
 
 //EXECUTE
 void 	execute(t_shell *shell);
+void 	execute_single_command(t_shell *shell);
 int 	run(t_command *command,char **params,t_shell *shell);
 void 	execute_commands(t_shell *shell, char **commands, int n);
 char 	*strip_path(char *cmd);
