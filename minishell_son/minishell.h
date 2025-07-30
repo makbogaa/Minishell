@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/30 16:00:05 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:53:04 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,8 @@ int		is_whitespace(char c);
 //EXECUTE
 void 	execute(t_shell *shell);
 void 	execute_single_command(t_shell *shell);
+void 	handle_command_execution(t_shell *shell, char **params);
+int 	setup_and_restore_redirections(t_shell *shell, int *original_stdin, int *original_stdout, int setup_mode);
 int 	run(t_command *command,char **params,t_shell *shell);
 void 	execute_commands(t_shell *shell, char **commands, int n);
 char 	*strip_path(char *cmd);

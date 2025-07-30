@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:18:27 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/30 16:40:56 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:53:02 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,75 @@ char *strip_path(char *cmd)
     return cmd;
 }
 
+void handle_command_execution(t_shell *shell, char **params)
+{
+    char *cmd_name;
+    
+    if (shell->command_p->builtin == 2 || shell->command_p->builtin == 1)
+        run(shell->command_p, params, shell);
+    else if(shell->command_p->builtin == 3)
+    {
+        cmd_name = strip_path(shell->command_p->command);
+        if (ft_strcmp(cmd_name, "echo") == 0)
+            builtin_echo(params);
+        else if(ft_strcmp(cmd_name,"pwd") == 0)
+            builtin_pwd();
+        else if(ft_strcmp(cmd_name,"exit") == 0)
+            builtin_exit(params);
+        else if(ft_strcmp(cmd_name,"env") == 0)
+            builtin_env(shell->envp);
+        else if(ft_strcmp(cmd_name,"cd") == 0)
+            builtin_cd(shell, params);
+        else if (ft_strcmp(cmd_name, "export") == 0)
+            builtin_export(&shell->envp, params);
+        else if (ft_strcmp(cmd_name, "unset") == 0)
+            builtin_unset(shell, params[1]);
+        else
+            printf("command not found: %s\n", cmd_name);
+    }
+}
+
+int setup_and_restore_redirections(t_shell *shell, int *original_stdin, int *original_stdout, int setup_mode)
+{
+    if (!shell->command_p || !shell->command_p->redirections)
+        return 0;
+        
+    if (setup_mode) // Setup mode
+    {
+        *original_stdin = dup(STDIN_FILENO);
+        *original_stdout = dup(STDOUT_FILENO);
+        
+        if (setup_redirections(shell->command_p) == -1)
+        {
+            if (*original_stdin != -1)
+            {
+                dup2(*original_stdin, STDIN_FILENO);
+                close(*original_stdin);
+            }
+            if (*original_stdout != -1)
+            {
+                dup2(*original_stdout, STDOUT_FILENO);
+                close(*original_stdout);
+            }
+            return -1;
+        }
+    }
+    else // Restore mode
+    {
+        if (*original_stdin != -1)
+        {
+            dup2(*original_stdin, STDIN_FILENO);
+            close(*original_stdin);
+        }
+        if (*original_stdout != -1)
+        {
+            dup2(*original_stdout, STDOUT_FILENO);
+            close(*original_stdout);
+        }
+    }
+    return 0;
+}
+
 int	check_pipe_syntax(char *str)
 {
 	int	i;
@@ -86,7 +155,6 @@ void execute(t_shell *shell)
     char **params;
     char **commands_pipes;
     int i_pipes;
-    char *cmd_name;
     int original_stdin = -1;
     int original_stdout = -1;
 
@@ -104,100 +172,26 @@ void execute(t_shell *shell)
     }
     
     // Redirection setup (sadece pipe olmayan durumlarda)
-    if (shell->command_p && shell->command_p->redirections)
-    {
-        original_stdin = dup(STDIN_FILENO);
-        original_stdout = dup(STDOUT_FILENO);
-        
-        if (setup_redirections(shell->command_p) == -1)
-        {
-            if (original_stdin != -1)
-            {
-                dup2(original_stdin, STDIN_FILENO);
-                close(original_stdin);
-            }
-            if (original_stdout != -1)
-            {
-                dup2(original_stdout, STDOUT_FILENO);
-                close(original_stdout);
-            }
-            return;
-        }
-    }
+    if (setup_and_restore_redirections(shell, &original_stdin, &original_stdout, 1) == -1)
+        return;
     
     params = get_params(shell->command_p);
-	//printf("Executing command: %s\n", shell->command_p->command);
-    if (shell->command_p->builtin == 2 || shell->command_p->builtin == 1)
-		run(shell->command_p, params,shell);
-	else if(shell->command_p->builtin == 3)
-	{
-        cmd_name = strip_path(shell->command_p->command);
-		if (ft_strcmp(cmd_name, "echo") == 0)
-            builtin_echo(params);
-		else if(ft_strcmp(cmd_name,"pwd") == 0)
-			builtin_pwd();
-		else if(ft_strcmp(cmd_name,"exit") == 0)
-			builtin_exit(params);
-		else if(ft_strcmp(cmd_name,"env") == 0)
-			builtin_env(shell->envp);
-        else if(ft_strcmp(cmd_name,"cd") == 0)
-            builtin_cd(shell, params);
-        else if (ft_strcmp(cmd_name, "export") == 0)
-            builtin_export(&shell->envp, params);
-        else if (ft_strcmp(cmd_name, "unset") == 0)
-            builtin_unset(shell, params[1]);
-        else
-            printf("command not found: %s\n", cmd_name);
-		free(params);
-	}
+    handle_command_execution(shell, params);
+    free(params);
     
     // File descriptor'ları restore et
-    if (shell->command_p && shell->command_p->redirections)
-    {
-        if (original_stdin != -1)
-        {
-            dup2(original_stdin, STDIN_FILENO);
-            close(original_stdin);
-        }
-        if (original_stdout != -1)
-        {
-            dup2(original_stdout, STDOUT_FILENO);
-            close(original_stdout);
-        }
-    }
+    setup_and_restore_redirections(shell, &original_stdin, &original_stdout, 0);
 }
 
 void execute_single_command(t_shell *shell)
 {
     char **params;
-    char *cmd_name;
 
     if (!shell || !shell->command_p)
         return;
     
     params = get_params(shell->command_p);
-    if (shell->command_p->builtin == 2 || shell->command_p->builtin == 1)
-        run(shell->command_p, params, shell);
-    else if(shell->command_p->builtin == 3)
-    {
-        cmd_name = strip_path(shell->command_p->command);
-        if (ft_strcmp(cmd_name, "echo") == 0)
-            builtin_echo(params);
-        else if(ft_strcmp(cmd_name,"pwd") == 0)
-            builtin_pwd();
-        else if(ft_strcmp(cmd_name,"exit") == 0)
-            builtin_exit(params);
-        else if(ft_strcmp(cmd_name,"env") == 0)
-            builtin_env(shell->envp);
-        else if(ft_strcmp(cmd_name,"cd") == 0)
-            builtin_cd(shell, params);
-        else if (ft_strcmp(cmd_name, "export") == 0)
-            builtin_export(&shell->envp, params);
-        else if (ft_strcmp(cmd_name, "unset") == 0)
-            builtin_unset(shell, params[1]);
-        else
-            printf("command not found: %s\n", cmd_name);
-        free(params);
-    }
+    handle_command_execution(shell, params);
+    free(params);
 }
 

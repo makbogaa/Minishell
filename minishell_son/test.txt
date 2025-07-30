@@ -1,2 +1,1 @@
 hello
-/home/makboga/Desktop/benim_shell/minishell_son
