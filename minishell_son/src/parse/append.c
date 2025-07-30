@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 19:06:02 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/07/23 18:28:27 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:00:05 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void append_command(t_shell *shell, char *str,int builtin, t_command **temp)
 		shell->command_p->next = NULL;
 		shell->command_p->parameters_p = NULL;
 		shell->command_p->token = NULL;
+		shell->command_p->redirections = NULL;  // YENİ
 		shell->command_p->flag = 1;
 		shell->command_p->token_flag = 0;
 		shell->command_p->builtin = builtin;
@@ -45,6 +46,7 @@ void append_command(t_shell *shell, char *str,int builtin, t_command **temp)
 		(*temp)->next->next = NULL;
 		(*temp)->next->parameters_p = NULL;
 		(*temp)->next->token = NULL;
+		(*temp)->next->redirections = NULL;  // YENİ
 		(*temp)->next->token_flag = 0;
 		(*temp)->next->builtin = builtin;
 		(*temp)->next->flag = 1;
@@ -62,6 +64,7 @@ void append_command(t_shell *shell, char *str,int builtin, t_command **temp)
 			last->next->next = NULL;
 			last->next->parameters_p = NULL;
 			last->next->token = NULL;
+			last->next->redirections = NULL;  // YENİ
 			last->next->token_flag = 0;
 			last->next->builtin = builtin;
 			last->next->flag = 1;

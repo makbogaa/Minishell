@@ -9,6 +9,8 @@ SRCS = minishell.c\
 	   	src/environment.c \
 		src/execute_commands.c \
 		src/execute.c \
+		src/redirection.c \
+		src/redirection_parser.c \
 		src/builtin/builtin.c \
 		src/builtin/env.c \
 		src/builtin/cd.c \

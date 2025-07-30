@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:27 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/23 16:23:44 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:00:05 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,11 @@ void	init_shell(t_shell *shell, char **envp)
     shell->builtin[7] = NULL;
     
 	shell->tokens[0] = ft_strdup("|");
-	shell->tokens[1] = NULL;
+	shell->tokens[1] = ft_strdup(">");
+	shell->tokens[2] = ft_strdup("<");
+	shell->tokens[3] = ft_strdup(">>");
+	shell->tokens[4] = ft_strdup("<<");
+	shell->tokens[5] = NULL;
     get_hostname(shell);
 	///
     int	i;
@@ -67,7 +71,8 @@ void start_minishell(t_shell *shell)
             free(shell->current_dir);
         shell->current_dir = getcwd(NULL, 0);
         get_display_info(shell);
-        get_prompt(shell);
+        if(!get_prompt(shell))
+			break;
 		if(shell->command_p)
 			execute(shell);
     }

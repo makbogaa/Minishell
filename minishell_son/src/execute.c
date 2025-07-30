@@ -71,8 +71,6 @@ void execute_commands(t_shell *shell, char **commands, int n)
     int *pipefds = NULL;
     pid_t pid;
     int i;
-	char *cmd_path;
-    char *cmd;
 
     if (n > 1)
     {
@@ -104,21 +102,11 @@ void execute_commands(t_shell *shell, char **commands, int n)
             tmp_shell.envp = shell->envp;
             tmp_shell.prompt = ft_strdup(commands[i]);
             parse_prompt(&tmp_shell);
-            cmd = tmp_shell.command_p->command;
-            if (cmd && cmd[0] == '/')
-                cmd_path = ft_strdup(cmd);
-            else
-                cmd_path = get_path(strip_path(cmd), tmp_shell.envp);
-            if (!cmd_path)
-            {
-                write(2, "zsh: command not found: ", 25);
-                write(2, cmd, ft_strlen(cmd));
-                write(2, "\n", 1);
-                free_shell(&tmp_shell);
-                exit(127);
-            }
-            free(cmd_path);
+            
+            // Pipe child process'te sadece basit execution yap, recursive execute() çağırma
+            tmp_shell.prompt = NULL; // Pipe flag'ini temizle
             execute(&tmp_shell);
+            
             free_shell(&tmp_shell);
             exit(0);
         }

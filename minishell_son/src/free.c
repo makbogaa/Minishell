@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:23:54 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/21 20:27:47 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/07/30 16:00:05 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,16 +52,18 @@ void free_shell(t_shell *shell)
 		free(shell->display_info);
 	if (shell->hostname)
 		free(shell->hostname);
-	
-	// Builtin dizisini temizle
 	i = 0;
-	while (i < 7 && shell->builtin[i])
+	while (shell->builtin[i])
 	{
 		free(shell->builtin[i]);
 		i++;
 	}
-	
-	// Command listesini temizle
+	i = 0;
+    while (shell->tokens[i])
+    {
+        free(shell->tokens[i]);
+        i++;
+    }
 	free_command(shell);
 	if (shell->envp)
 	{
@@ -159,9 +161,25 @@ void free_command(t_shell *shell)
 					param = next_param;
 				}
 			}
+			if (current->redirections)
+				free_redirections(current->redirections);
 			free(current->command);
+			if (current->token)
+				free(current->token);
 			free(current);
 			current = next;
 		}
+	}
+}
+void free_parameters(t_parameters *params)
+{
+	t_parameters *temp;
+
+	while (params)
+	{
+		temp = params;
+		params = params->next;
+		free(temp->parameter);
+		free(temp);
 	}
 }

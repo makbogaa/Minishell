@@ -87,6 +87,8 @@ void execute(t_shell *shell)
     char **commands_pipes;
     int i_pipes;
     char *cmd_name;
+    int original_stdin = -1;
+    int original_stdout = -1;
 
     if (ft_strchr(shell->prompt, '|'))
     {
@@ -100,6 +102,29 @@ void execute(t_shell *shell)
         ft_free_split(commands_pipes);
         return;
     }
+    
+    // Redirection setup (sadece pipe olmayan durumlarda)
+    if (shell->command_p && shell->command_p->redirections)
+    {
+        original_stdin = dup(STDIN_FILENO);
+        original_stdout = dup(STDOUT_FILENO);
+        
+        if (setup_redirections(shell->command_p) == -1)
+        {
+            if (original_stdin != -1)
+            {
+                dup2(original_stdin, STDIN_FILENO);
+                close(original_stdin);
+            }
+            if (original_stdout != -1)
+            {
+                dup2(original_stdout, STDOUT_FILENO);
+                close(original_stdout);
+            }
+            return;
+        }
+    }
+    
     params = get_params(shell->command_p);
 	//printf("Executing command: %s\n", shell->command_p->command);
     if (shell->command_p->builtin == 2 || shell->command_p->builtin == 1)
@@ -125,5 +150,20 @@ void execute(t_shell *shell)
             printf("command not found: %s\n", cmd_name);
 		free(params);
 	}
+    
+    // File descriptor'ları restore et
+    if (shell->command_p && shell->command_p->redirections)
+    {
+        if (original_stdin != -1)
+        {
+            dup2(original_stdin, STDIN_FILENO);
+            close(original_stdin);
+        }
+        if (original_stdout != -1)
+        {
+            dup2(original_stdout, STDOUT_FILENO);
+            close(original_stdout);
+        }
+    }
 }
 

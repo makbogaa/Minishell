@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/28 19:35:19 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:00:05 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,24 @@ typedef struct s_parameters
 	struct s_parameters *next;
 }t_parameters;
 
+// Redirection türleri
+typedef enum e_redirect_type
+{
+	REDIRECT_NONE,
+	REDIRECT_IN,        // <
+	REDIRECT_OUT,       // >
+	REDIRECT_APPEND,    // >>
+	REDIRECT_HEREDOC    // <<
+} t_redirect_type;
+
+// Redirection yapısı
+typedef struct s_redirect
+{
+	t_redirect_type type;
+	char *filename;
+	int fd;
+	struct s_redirect *next;
+} t_redirect;
 
 typedef struct s_command
 {
@@ -56,6 +74,7 @@ typedef struct s_command
 	int token_flag;
 	int flag;
 	int builtin;
+	t_redirect *redirections;    // Yeni: redirection listesi
 	struct s_command *next;
 }	t_command;
 
@@ -99,7 +118,7 @@ int		open_file(char *filename, int flags);
 
 
 //PARSER
-void	get_prompt(t_shell *shell);
+int		get_prompt(t_shell *shell);
 void 	parse_prompt(t_shell *shell);
 char	*single_quote_control(char **prompt);
 char	*double_quote_control(char **prompt);
@@ -107,6 +126,7 @@ t_quote *quote_init(void);
 int		counter_quote(char *str, char *quoter);
 char 	**copy_multiple_input(char **multiple_input,char *temp, int len);
 char 	*get_characters(char **prompt);
+char 	*get_redirect_operator(char **prompt);
 char 	*expand_if_dollar(const char *str, int *i);
 char 	*get_next_char(const char *str, int *i);
 char	*string_concatation_heap(char **str);
@@ -157,6 +177,20 @@ char	*ft_strjoin_3(const char *s1, const char *s2, const char *s3);
 
 //UTILS
 char	*string_concatation(char **str);
+
+// REDIRECTION
+t_redirect	*create_redirect(t_redirect_type type, char *filename);
+void		add_redirect(t_command *cmd, t_redirect *redirect);
+void		free_redirections(t_redirect *redirections);
+int			setup_redirections(t_command *cmd);
+int			restore_redirections(t_command *cmd);
+int			handle_heredoc(char *delimiter);
+int			is_redirect_token(char *token);
+t_redirect_type	get_redirect_type(char *token);
+void		process_redirections(t_shell *shell);
+void		remove_parameter(t_parameters **head, t_parameters *to_remove);
+char		*parse_redirect_token(char **prompt);
+
 //ERROR
 void exit_with_error(char *msg);
 #endif

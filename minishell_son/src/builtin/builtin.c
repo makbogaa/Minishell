@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 16:30:18 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/28 14:42:21 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:00:05 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,16 @@ int	run(t_command *cmd, char **args, t_shell *sh)
 	pid = fork();
 	if (pid == 0)
 	{
+		// Redirectionları setup et
+		if (setup_redirections(cmd) == -1)
+			exit(1);
+			
 		if (has_slash(cmd->command))
 		{
 			execve(cmd->command, args, sh->envp);
 			if (errno == ENOENT)
 			{
-				write(2, "zsh: no such file or directory: ", 32);
+				write(2, "minishell: no such file or directory: ", 38);
 				write(2, cmd->command, ft_strlen(cmd->command));
 				write(2, "\n", 1);
 				exit(127);
@@ -42,7 +46,7 @@ int	run(t_command *cmd, char **args, t_shell *sh)
 		path = get_path(cmd->command, sh->envp);
 		if (!path)
 		{
-			write(2, "zsh: command not found: ", 25);
+			write(2, "minishell: command not found: ", 31);
 			write(2, cmd->command, ft_strlen(cmd->command));
 			write(2, "\n", 1);
 			exit(127);

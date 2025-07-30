@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 22:24:27 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/07/28 19:34:42 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:00:05 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,8 @@ char *get_characters(char **prompt)
     tmp = NULL;
     i = 0;
     while ((*prompt)[i] && !is_whitespace((*prompt)[i]) &&
-       (*prompt)[i] != '\'' && (*prompt)[i] != '"')
+       (*prompt)[i] != '\'' && (*prompt)[i] != '"' &&
+       (*prompt)[i] != '>' && (*prompt)[i] != '<' && (*prompt)[i] != '|')
     {
         old_i = i;
         if ((*prompt)[i] == '$')
@@ -104,4 +105,44 @@ char *get_characters(char **prompt)
     if (result == NULL)
         return (ft_strdup(""));
     return (result);
+}
+
+// Redirection operatörlerini parse eden fonksiyon
+char *get_redirect_operator(char **prompt)
+{
+    char *result;
+    
+    if (!*prompt || !**prompt)
+        return (NULL);
+        
+    // >> operatörü
+    if (**prompt == '>' && *(*prompt + 1) == '>')
+    {
+        result = ft_strdup(">>");
+        *prompt += 2;
+        return (result);
+    }
+    // << operatörü  
+    else if (**prompt == '<' && *(*prompt + 1) == '<')
+    {
+        result = ft_strdup("<<");
+        *prompt += 2;
+        return (result);
+    }
+    // > operatörü
+    else if (**prompt == '>')
+    {
+        result = ft_strdup(">");
+        *prompt += 1;
+        return (result);
+    }
+    // < operatörü
+    else if (**prompt == '<')
+    {
+        result = ft_strdup("<");
+        *prompt += 1;
+        return (result);
+    }
+    
+    return (NULL);
 }

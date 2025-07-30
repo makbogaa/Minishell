@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   double_quote.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 20:07:25 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/07/18 17:06:54 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/07/30 14:42:03 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,12 @@ static char *dq_expand_and_concat(const char *str, int start, int end)
     
     result = NULL;
     i = start;
-    while (i < end) {
+    while (i <= end ) {
+		if(str[i] == '"')
+		{
+			i++;
+			continue;
+		}
         if (str[i] == '$')
             tmp = expand_if_dollar(str, &i);
         else
@@ -42,6 +47,7 @@ static void double_quote_loop(t_quote *quote)
         if(ft_strchr(quote->current_parameter, '"') && counter_quote(quote->current_parameter, "\"") % 2 == 1)
         {
             expanded = dq_expand_and_concat(quote->current_parameter, 0, ft_strlen(quote->current_parameter));
+
             quote->parameters = copy_multiple_input(quote->parameters, expanded, quote->len);
             free(expanded);
             break;
@@ -107,6 +113,13 @@ char *double_quote_control(char **prompt)
 			result = set_and_free(result, ft_strjoin(result, temp));
 			free(temp);
 		}
+	}
+	if(**prompt == '\'' && *(*prompt + 1) != '\'')
+	{
+		temp = result;
+		result = ft_strjoin(temp, single_quote_control(prompt));
+		if (temp)
+			free(temp);
 	}
 	return result;
 }

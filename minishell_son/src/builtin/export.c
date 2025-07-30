@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:53:24 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/17 16:40:01 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/30 15:13:16 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,10 @@ static int	update_env(char ***envp, const char *key, const char *value)
 	int key_len = ft_strlen(key);
 	char *new_entry;
 
+	// Hem minishell environment'ını hem sistem environment'ını güncelle
+	*envp = mini_setenv(*envp, key, value, 1);
+	setenv(key, value, 1);
+	
 	while ((*envp)[i])
 	{
 		if (!ft_strncmp((*envp)[i], key, key_len) && (*envp)[i][key_len] == '=')
@@ -128,6 +132,17 @@ int	builtin_export(char ***envp, char **argv)
 
 	i = 1;
 	err = 0;
+	if (!argv[1])
+	{
+		// Argüman yoksa tüm environment değişkenlerini declare -x formatında göster
+		i = 0;
+		while ((*envp)[i])
+		{
+			printf("declare -x %s\n", (*envp)[i]);
+			i++;
+		}
+		return (0);
+	}
 	while (argv[i])
 	{
 		if (export_single_var(envp, argv[i]) != 0)
