@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:18:27 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/28 19:28:18 by makboga          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:40:56 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,11 +90,8 @@ void execute(t_shell *shell)
     int original_stdin = -1;
     int original_stdout = -1;
 
-    // printf("DEBUG: execute() called with prompt: '%s'\n", shell->prompt ? shell->prompt : "NULL"); // DEBUG
-
     if (ft_strchr(shell->prompt, '|'))
     {
-        // printf("DEBUG: Pipe detected, executing pipe commands\n"); // DEBUG
         if (check_pipe_syntax(shell->prompt) != 0)
             return;
         commands_pipes = ft_split(shell->prompt, '|');
