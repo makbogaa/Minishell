@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 16:30:18 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/30 16:00:05 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 18:59:01 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ int	run(t_command *cmd, char **args, t_shell *sh)
 	pid_t	pid;
 	int		status;
 	char	*path;
+	struct stat buffer;
 
 	pid = fork();
 	if (pid == 0)
@@ -32,29 +33,44 @@ int	run(t_command *cmd, char **args, t_shell *sh)
 			
 		if (has_slash(cmd->command))
 		{
-			execve(cmd->command, args, sh->envp);
+			stat(cmd->command, &buffer);
 			if (errno == ENOENT)
-			{
-				write(2, "minishell: no such file or directory: ", 38);
-				write(2, cmd->command, ft_strlen(cmd->command));
-				write(2, "\n", 1);
-				exit(127);
+            {
+				fprintf(stderr, "minishell: %s: No such file or directory\n", cmd->command);
+            	exit(127);
 			}
+			if (S_ISDIR(buffer.st_mode))
+			{
+				write(STDERR_FILENO, "minishell: ", 11);
+				write(STDERR_FILENO, cmd->command, ft_strlen(cmd->command));
+				write(STDERR_FILENO, " Is a directory\n", 16);
+				exit(126);
+			}
+
+			if (!(buffer.st_mode & S_IXUSR)) // Çalıştırma izni yoksa
+			{
+				write(STDERR_FILENO, "Permission denied\n", 19);
+				exit(126);
+			}
+
+			execve(cmd->command, args, sh->envp);
 			perror("execve");
-			exit(126);
+			exit(127);
 		}
 		path = get_path(cmd->command, sh->envp);
 		if (!path)
 		{
-			write(2, "minishell: command not found: ", 31);
-			write(2, cmd->command, ft_strlen(cmd->command));
-			write(2, "\n", 1);
+			write(STDERR_FILENO, "minishell: command not found: ", 31);
+			write(STDERR_FILENO, cmd->command, ft_strlen(cmd->command));
+			write(STDERR_FILENO, "\n", 1);
 			exit(127);
 		}
+		if(!cmd->command[0])
+			exit(0);
 		execve(path, args, sh->envp);
 		perror("execve");
 		free(path);
-		exit(126);
+		exit(127);
 	}
 	if (pid < 0)
 	{

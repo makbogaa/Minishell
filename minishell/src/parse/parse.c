@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/12 16:58:49 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 18:27:02 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void parse_prompt(t_shell *shell)
 		if(parse_func)
 		{
 			current_option = parse_func(&temp_prompt,shell);
-			if(current_option != NULL)
+			if(current_option != NULL && ft_strlen(current_option))
 			{
 				if(!command_temp_p)
 				{

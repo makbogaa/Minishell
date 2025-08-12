@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/12 16:11:15 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 18:00:48 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <sys/wait.h>
+ #include <sys/stat.h> 
 #include <fcntl.h>
 
 # ifndef BUFFER_SIZE

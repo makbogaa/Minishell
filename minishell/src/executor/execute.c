@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:59:51 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/12 16:23:50 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 18:22:38 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ char *strip_path(char *cmd)
 void handle_command_execution(t_shell *shell, char **params)
 {
     char *cmd_name;
-    
     if (shell->command_p->builtin == 2 || shell->command_p->builtin == 1)
         shell->last_exit_code = run(shell->command_p, params, shell);
     else if(shell->command_p->builtin == 3)
