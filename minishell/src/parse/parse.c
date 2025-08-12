@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/12 18:27:02 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 19:42:58 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,29 @@
 void append(t_shell *shell, char *str,int *command, t_command **temp)
 {
 	char *temp_str;
+    
     if (!str || !shell)
         return;
         
     int result;
 	result = prompt_type_control_loop(shell->builtin, 1, str);
+	int token_result = prompt_type_control_loop(shell->tokens,0,str);
 	if (!*command && (result == 1 || result == 2 || result == 3))
     {
-        // Sadece komut adını bırak
         temp_str = ft_strdup(str);
         append_command(shell, temp_str, prompt_type_control_loop(shell->builtin,1,str), temp);
         free(temp_str);
         *command = 1;
     }
-    else if(prompt_type_control_loop(shell->tokens,0,str) == 4)
+    else if(token_result == 4)
     {
-		append_token(str,temp);
-		*command = 0;
+        if (*temp)
+        {
+            t_parameters *new_param = malloc(sizeof(t_parameters));
+            new_param->parameter = ft_strdup(str);
+            new_param->next = NULL;
+            append_parameter(new_param,temp);
+        }
 	}
     else
     {
@@ -60,7 +66,6 @@ void parse_prompt(t_shell *shell)
 	int command;
 	t_command *command_temp_p;
 
-	// printf("DEBUG: parse_prompt() called with: '%s'\n", shell->prompt); // DEBUG
 	command = 0;
 	free_command(shell);
 	command_temp_p = NULL;
@@ -69,7 +74,6 @@ void parse_prompt(t_shell *shell)
 	start = temp_prompt;
 	while(temp_prompt && *temp_prompt)
 	{
-		//printf("DEBUG: Parse loop - current char: '%c'\n", *temp_prompt); // DEBUG
 		parse_func = NULL;
 		if(*temp_prompt == '\'')
 			parse_func = single_quote_control;
@@ -103,8 +107,6 @@ void parse_prompt(t_shell *shell)
 		temp_prompt++;
 	}
 	shell->command_p = command_temp_p;
-	
-	// Redirection processing (sadece pipe olmayan durumlarda)
 	if (!ft_strchr(shell->prompt, '|'))
 		process_redirections(shell);
 	
@@ -122,7 +124,6 @@ void	get_hostname(t_shell *shell)
 		shell->hostname = ft_strdup("localhost");
 		return;
 	}
-	
 	host_f->fd = open("/etc/hostname", O_RDONLY);
 	if (host_f->fd < 0)
 	{
@@ -130,7 +131,6 @@ void	get_hostname(t_shell *shell)
 		free(host_f);
 		return;
 	}
-	
 	host_f->b_read = 1;
 	host_f->total_b_read = 0;
 	while (host_f->b_read > 0)
@@ -138,7 +138,6 @@ void	get_hostname(t_shell *shell)
 		host_f->b_read = read(host_f->fd, host_f->buffer, BUFFER_SIZE);
 		if (host_f->b_read <= 0)
 			break;
-			
 		host_f->result = malloc(host_f->total_b_read + host_f->b_read + 1);
 		if (!host_f->result)
 		{
@@ -160,12 +159,10 @@ void	get_hostname(t_shell *shell)
 		shell->hostname = host_f->result;
 	}
 	close(host_f->fd);
-	
 	if (shell->hostname && host_f->total_b_read > 0)
 		shell->hostname[host_f->total_b_read - 1] = '\0';
 	else if (!shell->hostname)
 		shell->hostname = ft_strdup("localhost");
-		
 	free(host_f);
 }
 
@@ -175,18 +172,14 @@ void	get_display_info(t_shell *shell)
 	char	*properties;
 	char	*user;
 	char	*hostname;
-	
-	// Güvenli değer atamaları
+
 	user = getenv("USER");
 	if (!user)
 		user = "user";
-	
 	if (!shell->hostname)
 		hostname = "localhost";
 	else
 		hostname = shell->hostname;
-	
-	// current_dir kontrolü
 	if (!shell->current_dir)
 	{
 		path = ft_strdup("~");
@@ -201,7 +194,6 @@ void	get_display_info(t_shell *shell)
 		else
 			path = ft_strjoin("~", path + ft_strlen(user));
 	}
-	
 	properties = string_concatation((char *[]){BBLUE,
 							user, "@", hostname,":", BMAGENTA, path, RESET, "$ ", NULL});
 	shell->display_info = set_and_free(shell->display_info, properties);

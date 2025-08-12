@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:30:00 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/30 17:01:50 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 19:41:17 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,75 +134,174 @@ int setup_redirections(t_command *cmd)
 {
     t_redirect *current;
     int fd;
+    int input_fd = -1;
+    int output_fd = -1;
+    int has_file_args = 0;
 
     if (!cmd || !cmd->redirections)
         return (0);
+        
+    // Komutun file argümanları var mı kontrol et
+    if (cmd->parameters_p)
+        has_file_args = 1;
     
+    // İlk pass: Tüm redirection'ları kontrol et - herhangi bir hata varsa fail et
     current = cmd->redirections;
     while (current)
     {
         if (current->type == REDIRECT_IN)
         {
+            // Input dosyasının var olup olmadığını kontrol et
+            if (access(current->filename, F_OK) == -1)
+            {
+                ft_putstr_fd("minishell: ", 2);
+                ft_putstr_fd(current->filename, 2);
+                ft_putstr_fd(": No such file or directory\n", 2);
+                return (-1);
+            }
+            if (access(current->filename, R_OK) == -1)
+            {
+                ft_putstr_fd("minishell: ", 2);
+                ft_putstr_fd(current->filename, 2);
+                ft_putstr_fd(": Permission denied\n", 2);
+                return (-1);
+            }
+        }
+        else if (current->type == REDIRECT_OUT || current->type == REDIRECT_APPEND)
+        {
+            // Output dosyasını test et - açılabilir mi kontrol et
+            int flags = (current->type == REDIRECT_OUT) ? 
+                (O_WRONLY | O_CREAT | O_TRUNC) : (O_WRONLY | O_CREAT | O_APPEND);
+            fd = open(current->filename, flags, 0644);
+            if (fd == -1)
+            {
+                ft_putstr_fd("minishell: ", 2);
+                ft_putstr_fd(current->filename, 2);
+                ft_putstr_fd(": Permission denied\n", 2);
+                return (-1);
+            }
+            close(fd); // Test amaçlı, şimdilik kapat
+        }
+        current = current->next;
+    }
+    
+    // İkinci pass: Gerçek redirection'ları setup et
+    // Bash davranışı: tüm output dosyalarını sırayla oluştur/truncate et
+    current = cmd->redirections;
+    while (current)
+    {
+        if (current->type == REDIRECT_IN)
+        {
+            // Eğer komutun file argümanları varsa input redirection'ı skip et
+            if (has_file_args)
+            {
+                current = current->next;
+                continue;
+            }
+            
             fd = open(current->filename, O_RDONLY);
             if (fd == -1)
             {
                 perror(current->filename);
+                if (input_fd != -1)
+                    close(input_fd);
+                if (output_fd != -1)
+                    close(output_fd);
                 return (-1);
             }
-            if (dup2(fd, STDIN_FILENO) == -1)
-            {
-                perror("dup2");
-                close(fd);
-                return (-1);
-            }
-            close(fd);
+            // Önceki input fd'yi kapat - sadece son input'u kullan
+            if (input_fd != -1)
+                close(input_fd);
+            input_fd = fd;
         }
         else if (current->type == REDIRECT_OUT)
         {
+            // Bu file'ı oluştur/truncate et - bash gibi her defasında
             fd = open(current->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (fd == -1)
             {
                 perror(current->filename);
+                if (input_fd != -1)
+                    close(input_fd);
+                if (output_fd != -1)
+                    close(output_fd);
                 return (-1);
             }
-            if (dup2(fd, STDOUT_FILENO) == -1)
-            {
-                perror("dup2");
-                close(fd);
-                return (-1);
-            }
-            close(fd);
+            // Eğer bu son output değilse, file'ı kapat (sadece oluştur/truncate için açtık)
+            // Son output ise, fd'yi sakla
+            if (output_fd != -1)
+                close(output_fd);
+            output_fd = fd;
         }
         else if (current->type == REDIRECT_APPEND)
         {
+            // Bu file'ı oluştur (append mode)
             fd = open(current->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
             if (fd == -1)
             {
                 perror(current->filename);
+                if (input_fd != -1)
+                    close(input_fd);
+                if (output_fd != -1)
+                    close(output_fd);
                 return (-1);
             }
-            if (dup2(fd, STDOUT_FILENO) == -1)
-            {
-                perror("dup2");
-                close(fd);
-                return (-1);
-            }
-            close(fd);
+            // Eğer bu son output değilse, file'ı kapat
+            // Son output ise, fd'yi sakla
+            if (output_fd != -1)
+                close(output_fd);
+            output_fd = fd;
         }
         else if (current->type == REDIRECT_HEREDOC)
         {
+            // Eğer komutun file argümanları varsa input redirection'ı skip et
+            if (has_file_args)
+            {
+                current = current->next;
+                continue;
+            }
+            
             fd = handle_heredoc(current->filename); // filename heredoc'da delimiter
             if (fd == -1)
-                return (-1);
-            if (dup2(fd, STDIN_FILENO) == -1)
             {
-                perror("dup2");
-                close(fd);
+                if (input_fd != -1)
+                    close(input_fd);
+                if (output_fd != -1)
+                    close(output_fd);
                 return (-1);
             }
-            close(fd);
+            // Önceki input fd'yi kapat - sadece son input'u kullan
+            if (input_fd != -1)
+                close(input_fd);
+            input_fd = fd;
         }
         current = current->next;
     }
+    
+    // Şimdi actual dup2'ları yap - sadece sakladığımız fd'leri kullan
+    if (input_fd != -1)
+    {
+        if (dup2(input_fd, STDIN_FILENO) == -1)
+        {
+            perror("dup2");
+            close(input_fd);
+            if (output_fd != -1)
+                close(output_fd);
+            return (-1);
+        }
+        close(input_fd);
+    }
+    
+    if (output_fd != -1)
+    {
+        if (dup2(output_fd, STDOUT_FILENO) == -1)
+        {
+            perror("dup2");
+            close(output_fd);
+            return (-1);
+        }
+        close(output_fd);
+    }
+    
     return (0);
 }

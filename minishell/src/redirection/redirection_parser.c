@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:45:00 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/30 17:22:34 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 19:41:17 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,62 @@ void process_redirections(t_shell *shell)
     t_command *next_cmd;
     t_redirect *redirect;
     
+    // printf("DEBUG: process_redirections() called\n"); // DEBUG
+    
     cmd = shell->command_p;
     
     while (cmd)
     {
+        // printf("DEBUG: Processing command: %s\n", cmd->command); // DEBUG
+        
+        // Ayrıca parameters içinde de redirection kontrol et
+        if (cmd->parameters_p)
+        {
+            t_parameters *param = cmd->parameters_p;
+            t_parameters *prev_param = NULL;
+            
+            // printf("DEBUG: Command has parameters:\n"); // DEBUG
+            // t_parameters *debug_param = cmd->parameters_p; // DEBUG
+            // while (debug_param) { // DEBUG
+            //     printf("DEBUG:   param: '%s'\n", debug_param->parameter); // DEBUG
+            //     debug_param = debug_param->next; // DEBUG
+            // } // DEBUG
+            
+            while (param)
+            {
+                if (param->parameter && is_redirect_token(param->parameter) && param->next && param->next->parameter)
+                {
+                    // printf("DEBUG: Found redirection in parameters: '%s' -> '%s'\n", param->parameter, param->next->parameter); // DEBUG
+                    redirect = create_redirect(get_redirect_type(param->parameter), param->next->parameter);
+                    if (redirect)
+                    {
+                        // printf("DEBUG: Created redirect and adding to command\n"); // DEBUG
+                        add_redirect(cmd, redirect);
+                        
+                        // Bu parameter ve sonraki parameter'ı (filename) kaldır
+                        t_parameters *to_remove1 = param;
+                        t_parameters *to_remove2 = param->next;
+                        t_parameters *next_param = param->next->next;
+                        
+                        if (prev_param)
+                            prev_param->next = next_param;
+                        else
+                            cmd->parameters_p = next_param;
+                        
+                        free(to_remove1->parameter);
+                        free(to_remove1);
+                        free(to_remove2->parameter);
+                        free(to_remove2);
+                        
+                        param = next_param;
+                        continue;
+                    }
+                }
+                prev_param = param;
+                param = param->next;
+            }
+        }
+        
         // Eğer bu command'ın bir redirection token'ı varsa
         if (cmd->token_flag && cmd->token && is_redirect_token(cmd->token))
         {
@@ -42,50 +94,39 @@ void process_redirections(t_shell *shell)
                     cmd->token = NULL;
                     cmd->token_flag = 0;
                     
-                    // Filename command'ını listeden çıkar
-                    cmd->next = next_cmd->next;
-                    
-                    if (next_cmd->command)
+                    // Filename command'ı da kontrol et - eğer onun da token'ı varsa
+                    if (next_cmd->token_flag && next_cmd->token && is_redirect_token(next_cmd->token))
+                    {
+                        // Bu durumda sonraki command'ın token'ını mevcut command'a taşı
+                        cmd->token = ft_strdup(next_cmd->token);
+                        cmd->token_flag = 1;
+                        
+                        // Filename command'ını sadece command'dan temizle
+                        cmd->next = next_cmd->next;
                         free(next_cmd->command);
-                    free(next_cmd);
-                    
-                    // Aynı command'dan devam et
-                    continue;
+                        if (next_cmd->token)
+                            free(next_cmd->token);
+                        free(next_cmd);
+                        
+                        // Aynı command'dan devam et (token'ı henüz var)
+                        continue;
+                    }
+                    else
+                    {
+                        // Normal durum: filename command'ını listeden çıkar
+                        cmd->next = next_cmd->next;
+                        
+                        if (next_cmd->command)
+                            free(next_cmd->command);
+                        free(next_cmd);
+                        
+                        // Aynı command'dan devam et
+                        continue;
+                    }
                 }
             }
         }
         
-        // Ayrıca parameters içinde de redirection kontrol et
-        if (cmd->parameters_p)
-        {
-            t_parameters *param = cmd->parameters_p;
-            t_parameters *prev_param = NULL;
-            
-            while (param && param->next)
-            {
-                if (is_redirect_token(param->parameter))
-                {
-                    redirect = create_redirect(get_redirect_type(param->parameter), param->next->parameter);
-                    if (redirect)
-                    {
-                        add_redirect(cmd, redirect);
-                        t_parameters *next_param = param->next->next;
-                        free(param->parameter);
-                        free(param->next->parameter);
-                        free(param->next);
-                        if (prev_param)
-                            prev_param->next = next_param;
-                        else
-                            cmd->parameters_p = next_param;
-                        free(param);
-                        param = next_param;
-                        continue;
-                    }
-                }
-                prev_param = param;
-                param = param->next;
-            }
-        }
         cmd = cmd->next;
     }
 }
