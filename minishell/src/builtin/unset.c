@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 16:00:35 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/30 18:25:09 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 17:01:15 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	builtin_unset(t_shell *shell, char *name)
 	char	**new_env;
 
 	if (!name || !*name)
-		return (1);
+		return (0);
 		
 	// Sistem environment'ından da sil
 	unsetenv(name);

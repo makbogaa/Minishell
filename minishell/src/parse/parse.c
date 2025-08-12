@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/07/30 16:46:07 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 16:58:49 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void parse_prompt(t_shell *shell)
 	char	*temp_prompt;
 	char	*current_option;
 	char	*start;
-	char * (*parse_func)(char **);
+	char * (*parse_func)(char **,t_shell *);
 	int command;
 	t_command *command_temp_p;
 
@@ -69,7 +69,7 @@ void parse_prompt(t_shell *shell)
 	start = temp_prompt;
 	while(temp_prompt && *temp_prompt)
 	{
-		// printf("DEBUG: Parse loop - current char: '%c' (pos: %ld)\n", *temp_prompt, temp_prompt - start); // DEBUG
+		//printf("DEBUG: Parse loop - current char: '%c'\n", *temp_prompt); // DEBUG
 		parse_func = NULL;
 		if(*temp_prompt == '\'')
 			parse_func = single_quote_control;
@@ -86,7 +86,7 @@ void parse_prompt(t_shell *shell)
 			parse_func = get_characters;
 		if(parse_func)
 		{
-			current_option = parse_func(&temp_prompt);
+			current_option = parse_func(&temp_prompt,shell);
 			if(current_option != NULL)
 			{
 				if(!command_temp_p)

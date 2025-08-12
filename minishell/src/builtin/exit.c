@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:47:57 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/17 15:51:10 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 17:48:08 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,17 @@ void	builtin_exit(char **argv)
 	ft_putstr_fd("exit\n", 1);
 	if (!argv[1])
 		exit(0);
+	if(argv[2])
+	{
+		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
+		exit(1);
+	}
 	if (!is_numeric(argv[1]))
 	{
 		ft_putstr_fd("minishell: exit: ", 2);
 		ft_putstr_fd(argv[1], 2);
 		ft_putstr_fd(": numeric argument required\n", 2);
-		exit(255);
+		exit(2);
 	}
 	status = ft_atoi(argv[1]);
 	exit(status);

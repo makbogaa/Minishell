@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:59:51 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/30 17:59:34 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 16:23:50 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,24 +59,24 @@ void handle_command_execution(t_shell *shell, char **params)
     char *cmd_name;
     
     if (shell->command_p->builtin == 2 || shell->command_p->builtin == 1)
-        run(shell->command_p, params, shell);
+        shell->last_exit_code = run(shell->command_p, params, shell);
     else if(shell->command_p->builtin == 3)
     {
         cmd_name = strip_path(shell->command_p->command);
         if (ft_strcmp(cmd_name, "echo") == 0)
-            builtin_echo(params);
+            shell->last_exit_code =builtin_echo(params);
         else if(ft_strcmp(cmd_name,"pwd") == 0)
-            builtin_pwd();
+            shell->last_exit_code =builtin_pwd();
         else if(ft_strcmp(cmd_name,"exit") == 0)
             builtin_exit(params);
         else if(ft_strcmp(cmd_name,"env") == 0)
-            builtin_env(shell->envp);
+            shell->last_exit_code =builtin_env(shell->envp);
         else if(ft_strcmp(cmd_name,"cd") == 0)
-            builtin_cd(shell, params);
+            shell->last_exit_code =builtin_cd(shell, params);
         else if (ft_strcmp(cmd_name, "export") == 0)
-            builtin_export(&shell->envp, params);
+            shell->last_exit_code =builtin_export(&shell->envp, params);
         else if (ft_strcmp(cmd_name, "unset") == 0)
-            builtin_unset(shell, params[1]);
+            shell->last_exit_code =builtin_unset(shell, params[1]);
         else
             printf("command not found: %s\n", cmd_name);
     }

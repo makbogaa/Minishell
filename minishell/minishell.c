@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:27 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/30 16:00:05 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 16:09:29 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->tokens[3] = ft_strdup(">>");
 	shell->tokens[4] = ft_strdup("<<");
 	shell->tokens[5] = NULL;
+	shell->last_exit_code = 0;
     get_hostname(shell);
 	///
     int	i;
@@ -81,7 +82,7 @@ void start_minishell(t_shell *shell)
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
-
+	int exit_code;
 	(void)argc;
 	(void)argv;
 
@@ -89,6 +90,7 @@ int	main(int argc, char **argv, char **envp)
 	
 	init_shell(&shell, envp);
 	start_minishell(&shell);
+	exit_code = shell.last_exit_code;
 	free_shell(&shell);
-	return (0);
+	return (exit_code);
 }

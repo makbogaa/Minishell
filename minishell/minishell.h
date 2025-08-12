@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/30 16:57:15 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 16:11:15 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ typedef struct s_shell
 	char	*hostname;
 	char    *display_info;
 	char 	**options;
+	int		last_exit_code;
 	t_command *command_p;
 	// İleride komut yapısı vb. ekleyebiliriz
 }	t_shell;
@@ -120,14 +121,14 @@ int		open_file(char *filename, int flags);
 //PARSER
 int		get_prompt(t_shell *shell);
 void 	parse_prompt(t_shell *shell);
-char	*single_quote_control(char **prompt);
-char	*double_quote_control(char **prompt);
+char	*single_quote_control(char **prompt,t_shell *shell);
+char	*double_quote_control(char **prompt,t_shell *shell);
 t_quote *quote_init(void);
 int		counter_quote(char *str, char *quoter);
 char 	**copy_multiple_input(char **multiple_input,char *temp, int len);
-char 	*get_characters(char **prompt);
-char 	*get_redirect_operator(char **prompt);
-char 	*expand_if_dollar(const char *str, int *i);
+char 	*get_characters(char **prompt,t_shell *shell);
+char 	*get_redirect_operator(char **prompt,t_shell *shell);
+char 	*expand_if_dollar(const char *str, int *i,t_shell *shell);
 char 	*get_next_char(const char *str, int *i);
 char	*string_concatation_heap(char **str);
 void 	append_command(t_shell *shell, char *str,int builtin, t_command **temp);

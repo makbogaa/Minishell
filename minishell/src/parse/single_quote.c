@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 10:36:58 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/07/30 14:43:42 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/12 16:05:28 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,11 @@ static char *single_quote(char **prompt)
 		return ft_strndup(start + 1, end - start - 1);
 	}
 }
-char *single_quote_control(char **prompt)
+char *single_quote_control(char **prompt,t_shell *shell)
 {
 	char *result;
 	char *temp;
+
 	result = single_quote(prompt);
 	while(**prompt &&  **prompt != '"' && **prompt != ' ')
 	{
@@ -100,7 +101,7 @@ char *single_quote_control(char **prompt)
 		}
 		else
 		{
-			temp = get_characters(prompt);
+			temp = get_characters(prompt,shell);
 			result = set_and_free(result, ft_strjoin(result, temp));
 			free(temp);
 		}
@@ -108,7 +109,7 @@ char *single_quote_control(char **prompt)
 	if(**prompt == '"' && *(*prompt + 1) != '"')
 	{
 		temp = result;
-		result = ft_strjoin(temp, double_quote_control(prompt));
+		result = ft_strjoin(temp, double_quote_control(prompt,shell));
 		if (temp)
 			free(temp);
 	}
