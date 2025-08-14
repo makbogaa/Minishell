@@ -5,123 +5,102 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/30 16:59:28 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/30 17:23:25 by makboga          ###   ########.fr       */
+/*   Created: 2025/07/30 16:59:51 by makboga           #+#    #+#             */
+/*   Updated: 2025/08/14 19:30:28 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-char *get_path(char *cmd, char **envp)
+static char	*check_path_in_dirs(char **paths, char *cmd)
 {
-	char **paths;
-	char *full_path;
-	int i;
+	char	*temp;
+	char	*full_path;
+	int		i;
 
-	if (!cmd || !envp)
-		return NULL;
-	if (cmd[0] == '/' && access(cmd, X_OK) == 0)
-		return ft_strdup(cmd);
-	while (*envp && ft_strncmp(*envp, "PATH=", 5) != 0)
-		envp++;
-	if (!*envp)
-		return NULL;
-	paths = ft_split(*envp + 5, ':');
-	if (!paths)
-		return NULL;
 	i = 0;
 	while (paths[i])
 	{
-		full_path = ft_strjoin(paths[i], "/");
-		full_path = ft_strjoin_free(full_path, cmd);
+		temp = ft_strjoin(paths[i], "/");
+		full_path = ft_strjoin(temp, cmd);
+		free(temp);
 		if (access(full_path, X_OK) == 0)
-		{
-			ft_free_split(paths);
-			return full_path;
-		}
+			return (full_path);
 		free(full_path);
 		i++;
 	}
+	return (NULL);
+}
+
+char	*get_path(char *cmd)
+{
+	char	*path_env;
+	char	**paths;
+	char	*result;
+
+	if (ft_strchr(cmd, '/'))
+		return (ft_strdup(cmd));
+	path_env = getenv("PATH");
+	if (!path_env)
+		return (NULL);
+	paths = ft_split(path_env, ':');
+	if (!paths)
+		return (NULL);
+	result = check_path_in_dirs(paths, cmd);
 	ft_free_split(paths);
-	return NULL;
+	return (result);
 }
 
-void close_pipes(int *pipefds, int count)
+void	execute_commands(t_shell *shell, char **commands, int n)
 {
-    int i = 0;
-    while (i < count)
-    {
-        close(pipefds[i]);
-        i++;
-    }
+	int	*pipefds;
+
+	if (n < 2)
+		return ;
+	if (create_pipes(&pipefds, n) == -1)
+		return ;
+	fork_and_execute(shell, commands, n, pipefds);
 }
 
-void setup_child_fds(int *pipefds, int n, int i)
+void	cleanup_and_wait(int *pipefds, int n, pid_t last_pid, t_shell *shell)
 {
-    if (i != 0)
-        dup2(pipefds[(i - 1) * 2], STDIN_FILENO);
-    if (i != n - 1)
-        dup2(pipefds[i * 2 + 1], STDOUT_FILENO);
+	int	status;
+	int	i;
 
-    close_pipes(pipefds, 2 * (n - 1));
+	close_and_free_pipes(pipefds, n);
+	if (last_pid != -1)
+	{
+		waitpid(last_pid, &status, 0);
+		if (WIFEXITED(status))
+			shell->last_exit_code = WEXITSTATUS(status);
+	}
+	i = 0;
+	while (i < n - 1)
+	{
+		wait(NULL);
+		i++;
+	}
 }
 
-void execute_commands(t_shell *shell, char **commands, int n)
+void	execute_child_process(t_shell *shell, char *command,
+		t_pipe_info pipe_info)
 {
-    int *pipefds = NULL;
-    pid_t pid;
-    int i;
+	t_shell	tmp_shell;
 
-    if (n > 1)
-    {
-        pipefds = malloc(sizeof(int) * 2 * (n - 1));
-        if (!pipefds)
-            return;
-        i = 0;
-        while (i < n - 1)
-        {
-            if (pipe(pipefds + i * 2) == -1)
-            {
-                perror("pipe");
-                free(pipefds);
-                return;
-            }
-            i++;
-        }
-    }
-    i = 0;
-    while (i < n)
-    {
-        pid = fork();
-        if (pid == 0)
-        {
-            if (pipefds)
-                setup_child_fds(pipefds, n, i);
-            t_shell tmp_shell;
-            ft_memset(&tmp_shell, 0, sizeof(t_shell));
-            tmp_shell.envp = shell->envp;
-            tmp_shell.prompt = ft_strdup(commands[i]);
-            parse_prompt(&tmp_shell);
-            execute_single_command(&tmp_shell);
-            free_shell(&tmp_shell);
-            exit(0);
-        }
-        else if (pid < 0)
-        {
-            perror("fork");
-            break;
-        }
-        i++;
-    }
-    if (pipefds)
-    {
-        close_pipes(pipefds, 2 * (n - 1));
-        free(pipefds);
-    }
-    i = 0;
-    while (i < n)
-    {
-        wait(NULL);
-        i++;
-    }
+	ft_memset(&tmp_shell, 0, sizeof(t_shell));
+	tmp_shell.envp = shell->envp;
+	tmp_shell.prompt = ft_strdup(command);
+	parse_prompt(&tmp_shell);
+	setup_child_pipes(pipe_info.pipefds, pipe_info.n, pipe_info.i);
+	if (tmp_shell.command_p && tmp_shell.command_p->redirections)
+	{
+		if (setup_redirections(tmp_shell.command_p) != 0)
+		{
+			free_shell(&tmp_shell);
+			exit(1);
+		}
+	}
+	execute_single_command(&tmp_shell);
+	free_shell(&tmp_shell);
+	exit(tmp_shell.last_exit_code);
 }

@@ -6,33 +6,11 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 16:12:49 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/17 16:20:28 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/14 16:16:51 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-char	*ft_strjoin_3(const char *s1, const char *s2, const char *s3)
-{
-	char	*res;
-	int		len1;
-	int		len2;
-	int		len3;
-
-	if (!s1 || !s2 || !s3)
-		return (NULL);
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	len3 = ft_strlen(s3);
-	res = malloc(len1 + len2 + len3 + 1);
-	if (!res)
-		return (NULL);
-	ft_memcpy(res, s1, len1);
-	ft_memcpy(res + len1, s2, len2);
-	ft_memcpy(res + len1 + len2, s3, len3);
-	res[len1 + len2 + len3] = '\0';
-	return (res);
-}
 
 char	**ft_double_extension(char **matrix, char *new_str)
 {
@@ -77,31 +55,43 @@ char	*mini_getenv(const char *key, char **envp)
 	return (NULL);
 }
 
-char **mini_setenv(char **envp, const char *key, const char *value, int overwrite)
+static char	*create_env_entry(const char *key, const char *value)
 {
-    int i;
-    int len;
-    char *new_entry;
+	char	*temp;
+	char	*result;
 
-    len = ft_strlen(key);
-    i = 0;
-    while (envp && envp[i])
-    {
-        if (!ft_strncmp(envp[i], key, len) && envp[i][len] == '=')
-        {
-            if (!overwrite)
-                return (envp);
-            free(envp[i]);
-            new_entry = ft_strjoin_3(key, "=", value);
-            envp[i] = new_entry;
-            return (envp);
-        }
-        i++;
-    }
-    envp = ft_double_extension(envp, ft_strjoin_3(key, "=", value));
-    return (envp);
+	temp = ft_strjoin(key, "=");
+	if (!temp)
+		return (NULL);
+	result = ft_strjoin(temp, value);
+	free(temp);
+	return (result);
 }
 
+char	**mini_setenv(char **envp, const char *key, const char *value,
+	int overwrite)
+{
+	int		i;
+	int		len;
+	char	*new_var;
+
+	len = ft_strlen(key);
+	i = 0;
+	while (envp && envp[i])
+	{
+		if (!ft_strncmp(envp[i], key, len) && envp[i][len] == '=')
+		{
+			if (!overwrite)
+				return (envp);
+			free(envp[i]);
+			envp[i] = create_env_entry(key, value);
+			return (envp);
+		}
+		i++;
+	}
+	new_var = create_env_entry(key, value);
+	return (ft_double_extension(envp, new_var));
+}
 
 char	**mini_unsetenv(char *key, char **envp)
 {
@@ -115,7 +105,7 @@ char	**mini_unsetenv(char *key, char **envp)
 	j = 0;
 	while (envp && envp[i])
 		i++;
-	new_env = malloc(sizeof(char *) * i); // bir eksik çünkü biri silinecek
+	new_env = malloc(sizeof(char *) * i);
 	i = 0;
 	while (envp && envp[i])
 	{

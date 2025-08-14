@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:20:56 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/28 19:28:43 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/14 13:25:55 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ int	builtin_echo(char **argv)
 		n_flag = 1;
 		i++;
 	}
-	//write(1, "my echo: ", 9);
 	while (argv[i])
 	{
 		write(1, argv[i], ft_strlen(argv[i]));
@@ -52,4 +51,3 @@ int	builtin_echo(char **argv)
 		write(1, "\n", 1);
 	return (0);
 }
-

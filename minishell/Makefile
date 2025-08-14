@@ -1,4 +1,5 @@
 NAME = minishell
+
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 
@@ -9,8 +10,15 @@ SRCS = minishell.c\
 	   	src/environment.c \
 		src/executor/execute.c \
 		src/executor/execute_utils.c \
-		src/redirection/redirection.c \
+		src/executor/execute_builtins.c \
+		src/executor/execute_pipe_helpers.c \
+		src/executor/execute_helpers.c \
+		src/redirection/redirection_core.c \
 		src/redirection/redirection_parser.c \
+		src/redirection/redirection_setup.c \
+		src/redirection/redirection_process.c \
+		src/redirection/redirection_apply.c \
+		src/redirection/redirection_helpers.c \
 		src/builtin/builtin.c \
 		src/builtin/env.c \
 		src/builtin/cd.c \
@@ -18,8 +26,10 @@ SRCS = minishell.c\
 		src/builtin/pwd.c \
 		src/builtin/exit.c \
 		src/builtin/export.c \
+		src/builtin/export_utils.c \
 		src/builtin/unset.c \
 		src/free.c \
+		src/utils/command_preprocessor.c \
 		src/parse/parse_utils.c\
 		src/parse/parse.c\
 		src/parse/double_quote.c\

@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/12 18:00:48 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/14 19:20:44 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,13 @@ typedef struct s_parameters
 	char *parameter;
 	struct s_parameters *next;
 }t_parameters;
+
+typedef struct s_pipe_info
+{
+	int	*pipefds;
+	int	n;
+	int	i;
+}t_pipe_info;
 
 // Redirection türleri
 typedef enum e_redirect_type
@@ -145,9 +152,8 @@ void 	handle_command_execution(t_shell *shell, char **params);
 int 	setup_and_restore_redirections(t_shell *shell, int *original_stdin, int *original_stdout, int setup_mode);
 int 	run(t_command *command,char **params,t_shell *shell);
 void 	execute_commands(t_shell *shell, char **commands, int n);
-char 	*strip_path(char *cmd);
-char 	*get_path(char *cmd, char **envp);
 int		has_slash(const char *s);
+void	close_and_free_pipes(int *pipefds, int n);
 
 //FREE
 void 	free_argv(char **argv);
@@ -169,14 +175,47 @@ int 	builtin_pwd(void);
 int 	builtin_env(char **envp);
 int		builtin_export(char ***envp, char **argv);
 int		builtin_unset(t_shell *shell, char *name);
-void	builtin_exit(char **argv);
+void	builtin_exit(char **argv, int last_exit_code);
+
+//EXPORT UTILS
+int		is_valid_identifier(const char *str);
+int		update_env(char ***envp, const char *name, const char *value);
+void	add_env(char ***envp, const char *key_value);
+int		print_invalid_identifier(char *arg);
+int		export_single_var_helper(char ***envp, char *key, char *arg, char *equal_pos);
 
 //ENVIRONMENT
 char	*mini_getenv(const char *key, char **envp);
 char 	**mini_setenv(char **envp, const char *key, const char *value, int overwrite);
-char	**mini_unsetenv(char *key, char **envp);
 char	**ft_double_extension(char **matrix, char *new_str);
-char	*ft_strjoin_3(const char *s1, const char *s2, const char *s3);
+
+//executor/execute.c
+void	execute(t_shell *shell);
+void	execute_main(t_shell *shell);
+void	handle_pipe_commands(t_shell *shell);
+int		has_pipe_outside_quotes(char *str);
+void	fork_and_execute(t_shell *shell, char **commands, int n, int *pipefds);
+
+//executor/execute_utils.c
+char	*get_path(char *cmd);
+void	execute_commands(t_shell *shell, char **commands, int n);
+void	cleanup_and_wait(int *pipefds, int n, pid_t last_pid, t_shell *shell);
+void	execute_child_process(t_shell *shell, char *command, t_pipe_info pipe_info);
+
+//executor/execute_builtins.c
+void	handle_builtin_command(t_shell *shell, char **params, char *cmd_name);
+char	**get_params(t_command *command);
+void	handle_command_execution(t_shell *shell, char **params);
+void	handle_single_command_exec(t_shell *shell);
+void	execute_single_command(t_shell *shell);
+
+//executor/execute_pipe_helpers.c
+char	*strip_path(char *cmd);
+int		create_pipes(int **pipefds, int n);
+void	setup_child_pipes(int *pipefds, int n, int i);
+int		check_pipe_syntax(char *str);
+int		count_parameters(t_command *command);
+void	fill_params_array(char **params, t_command *command, int count);
 
 
 
@@ -193,8 +232,26 @@ int			handle_heredoc(char *delimiter);
 int			is_redirect_token(char *token);
 t_redirect_type	get_redirect_type(char *token);
 void		process_redirections(t_shell *shell);
+void		process_param_redirections(t_command *cmd);
+void		process_token_redirections(t_command *cmd);
 void		remove_parameter(t_parameters **head, t_parameters *to_remove);
 char		*parse_redirect_token(char **prompt);
+int			handle_param_redirect(t_command *cmd, t_parameters *param,
+				t_parameters *prev_param);
+int			process_input_redirections(t_redirect *current, int *input_fd,
+				int *output_fd);
+int			process_output_redirections(t_redirect *current, int *input_fd,
+				int *output_fd);
+int			handle_out_redirect(t_redirect *current, int *output_fd);
+int			handle_append_redirect(t_redirect *current, int *output_fd);
+void		handle_token_redirect(t_command *cmd, t_command *next_cmd);
+int			validate_redirections(t_command *cmd);
+int			setup_input_redirect(t_redirect *current, int *input_fd);
+int			setup_output_redirect(t_redirect *current, int *output_fd);
+int			apply_redirections(int input_fd, int output_fd);
+
+// Command preprocessing
+char		*normalize_redirections(char *command);
 
 //ERROR
 void exit_with_error(char *msg);

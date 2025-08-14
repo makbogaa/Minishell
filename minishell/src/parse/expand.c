@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 22:24:27 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/12 18:25:03 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/14 18:14:09 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,21 +110,28 @@ char *get_characters(char **prompt,t_shell *shell)
     if(**prompt == '"' && *(*prompt + 1) && *(*prompt + 1) == '"')
     {
         *(prompt) += 2;
-         if(**prompt && !ft_isspace(**prompt))
+        // Boş çift tırnak sonrası devam et - recursion olmadan
+        while (**prompt && !is_whitespace(**prompt) &&
+               **prompt != '\'' && **prompt != '"' &&
+               **prompt != '>' && **prompt != '<' && **prompt != '|')
         {
-            tmp = result;
-            result = ft_strjoin(tmp,get_characters(prompt,shell));
-            if (tmp)
+            int old_i = 0;
+            if (**prompt == '$')
+                tmp = expand_if_dollar(*prompt, &old_i, shell);
+            else
+                tmp = get_next_char(*prompt, &old_i);
+            *prompt += old_i;
+            
+            if (tmp) {
+                char *new_result = ft_strjoin(result ? result : "", tmp);
+                if (result)
+                    free(result);
+                result = new_result;
                 free(tmp);
+            }
         }
     }
-   else if(**prompt && !ft_isspace(**prompt))
-    {
-        tmp = result;
-        result = ft_strjoin(tmp,get_characters(prompt,shell));
-        if (tmp)
-            free(tmp);
-    }
+   // Recursion kaldırıldı - infinite loop önleniyor
     if (result == NULL)
         return (ft_strdup(""));
     return (result);

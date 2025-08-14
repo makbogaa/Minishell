@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:47:57 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/12 17:48:08 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/14 13:27:26 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	is_numeric(char *str)
 {
-	int i;
+	int	i;
 
 	if (!str || !*str)
 		return (0);
@@ -30,14 +30,14 @@ static int	is_numeric(char *str)
 	return (1);
 }
 
-void	builtin_exit(char **argv)
+void	builtin_exit(char **argv, int last_exit_code)
 {
 	int	status;
 
 	ft_putstr_fd("exit\n", 1);
 	if (!argv[1])
-		exit(0);
-	if(argv[2])
+		exit(last_exit_code);
+	if (argv[2])
 	{
 		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
 		exit(1);
@@ -52,4 +52,3 @@ void	builtin_exit(char **argv)
 	status = ft_atoi(argv[1]);
 	exit(status);
 }
-

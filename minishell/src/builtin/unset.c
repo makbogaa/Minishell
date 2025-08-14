@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 16:00:35 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/12 17:01:15 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/14 13:49:33 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 static int	var_name_match(const char *env_var, const char *name)
 {
-	int	i = 0;
+	int	i;
+
+	i = 0;
 	while (env_var[i] && name[i] && env_var[i] != '=')
 	{
 		if (env_var[i] != name[i])
@@ -24,17 +26,33 @@ static int	var_name_match(const char *env_var, const char *name)
 	return (name[i] == '\0' && env_var[i] == '=');
 }
 
-static char	**remove_env_var(char **envp, const char *name)
+static char	**allocate_new_env(char **envp)
 {
-	int		i;
-	int		j;
 	int		count;
 	char	**new_env;
 
 	count = 0;
 	while (envp[count])
 		count++;
-	new_env = malloc(sizeof(char *) * (count + 1));  // +1 for NULL terminator
+	new_env = malloc(sizeof(char *) * (count + 1));
+	return (new_env);
+}
+
+static int	free_and_return_null(char **new_env, int j)
+{
+	while (j > 0)
+		free(new_env[--j]);
+	free(new_env);
+	return (0);
+}
+
+static char	**remove_env_var(char **envp, const char *name)
+{
+	int		i;
+	int		j;
+	char	**new_env;
+
+	new_env = allocate_new_env(envp);
 	if (!new_env)
 		return (NULL);
 	i = 0;
@@ -45,12 +63,7 @@ static char	**remove_env_var(char **envp, const char *name)
 		{
 			new_env[j] = ft_strdup(envp[i]);
 			if (!new_env[j])
-			{
-				while (j > 0)
-					free(new_env[--j]);
-				free(new_env);
-				return (NULL);
-			}
+				return (free_and_return_null(new_env, j), NULL);
 			j++;
 		}
 		i++;
@@ -65,16 +78,11 @@ int	builtin_unset(t_shell *shell, char *name)
 
 	if (!name || !*name)
 		return (0);
-		
-	// Sistem environment'ından da sil
-	unsetenv(name);
-	
 	new_env = remove_env_var(shell->envp, name);
-	if (!new_env)
-		return (1);
-
-	ft_free_matrix(shell->envp);
-	shell->envp = new_env;
+	if (new_env)
+	{
+		ft_free_matrix(shell->envp);
+		shell->envp = new_env;
+	}
 	return (0);
 }
-
