@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/14 19:20:44 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/15 00:50:58 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ typedef struct s_shell
 	char    *display_info;
 	char 	**options;
 	int		last_exit_code;
+	int		is_quote;
 	t_command *command_p;
 	// İleride komut yapısı vb. ekleyebiliriz
 }	t_shell;

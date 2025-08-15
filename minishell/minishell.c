@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:27 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/12 16:09:29 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/15 00:51:25 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->current_dir = NULL;
 	shell->display_info = NULL;
     shell->command_p = NULL;
+	shell->is_quote = 0;
     
     // Builtin komutları başlat
     shell->builtin[0] = ft_strdup("exit");
