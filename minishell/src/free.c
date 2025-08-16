@@ -6,21 +6,23 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:23:54 by makboga           #+#    #+#             */
-/*   Updated: 2025/07/30 16:00:05 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/16 16:32:28 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void free_argv(char **argv)
+void	free_argv(char **argv)
 {
-    int j = 0;
-    while (argv[j])
-    {
-        free(argv[j]);
-        j++;
-    }
-    free(argv);
+	int	j;
+
+	j = 0;
+	while (argv[j])
+	{
+		free(argv[j]);
+		j++;
+	}
+	free(argv);
 }
 
 void	ft_free_split(char **split)
@@ -38,12 +40,12 @@ void	ft_free_split(char **split)
 	free(split);
 }
 
-void free_shell(t_shell *shell)
+void	free_shell(t_shell *shell)
 {
 	int	i;
 
 	if (!shell)
-		return;
+		return ;
 	if (shell->prompt)
 		free(shell->prompt);
 	if (shell->current_dir)
@@ -59,11 +61,11 @@ void free_shell(t_shell *shell)
 		i++;
 	}
 	i = 0;
-    while (shell->tokens[i])
-    {
-        free(shell->tokens[i]);
-        i++;
-    }
+	while (shell->tokens[i])
+	{
+		free(shell->tokens[i]);
+		i++;
+	}
 	free_command(shell);
 	if (shell->envp)
 	{
@@ -79,11 +81,14 @@ void free_shell(t_shell *shell)
 
 void	ft_free_matrix(char **matrix)
 {
-	int	i = 0;
+	int	i;
+
+	i = 0;
 	while (matrix && matrix[i])
 		free(matrix[i++]);
 	free(matrix);
 }
+
 char	*ft_strjoin_free(char *s1, const char *s2)
 {
 	char	*result;
@@ -108,15 +113,16 @@ char	*ft_strjoin_free(char *s1, const char *s2)
 
 char	*set_and_free(char *dest, char *src)
 {
-	if(dest)
+	if (dest)
 		free(dest);
 	if (!src)
 		return (NULL);
 	return (src);
 }
-void free_options(t_shell *shell)
+
+void	free_options(t_shell *shell)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (shell->options)
@@ -130,29 +136,31 @@ void free_options(t_shell *shell)
 	}
 }
 
-void free_quote(t_quote *quote)
+void	free_quote(t_quote *quote)
 {
 	if (!quote)
-		return;
+		return ;
 	free(quote->current_parameter);
 	free_multiple_input(quote->parameters);
 	free(quote);
 }
-void free_command(t_shell *shell)
+
+void	free_command(t_shell *shell)
 {
+	t_command		*current;
+	t_command		*next;
+	t_parameters	*param;
+	t_parameters	*next_param;
+
 	if (shell->command_p)
 	{
-		t_command *current;
-		t_command *next;
-		
 		current = shell->command_p;
 		while (current)
 		{
 			next = current->next;
 			if (current->parameters_p)
 			{
-				t_parameters *param = current->parameters_p;
-				t_parameters *next_param;
+				param = current->parameters_p;
 				while (param)
 				{
 					next_param = param->next;
@@ -171,9 +179,10 @@ void free_command(t_shell *shell)
 		}
 	}
 }
-void free_parameters(t_parameters *params)
+
+void	free_parameters(t_parameters *params)
 {
-	t_parameters *temp;
+	t_parameters	*temp;
 
 	while (params)
 	{
