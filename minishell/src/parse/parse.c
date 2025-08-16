@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/15 00:49:52 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/16 16:08:35 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,13 @@ void append(t_shell *shell, char *str,int *command, t_command **temp)
     int result;
 	result = prompt_type_control_loop(shell->builtin, 1, str);
 	int token_result = prompt_type_control_loop(shell->tokens,0,str);
-	if (!*command && (result == 1 || result == 2 || result == 3))
+	if (!*command && ft_strlen(str) == 0)
+    {
+        // Boş string komut pozisyonunda - atla ama parsing devam etsin
+        // *command = 0 kalır, böylece sonraki token command olabilir
+        return;
+    }
+    else if (!*command && (result == 1 || result == 2 || result == 3))
     {
         temp_str = ft_strdup(str);
         append_command(shell, temp_str, prompt_type_control_loop(shell->builtin,1,str), temp);
@@ -91,7 +97,8 @@ void parse_prompt(t_shell *shell)
 		if(parse_func)
 		{
 			current_option = parse_func(&temp_prompt,shell);
-			if(current_option != NULL && ft_strlen(current_option))
+			// Boş argümanları da ekle - bash uyumluluğu için
+			if(current_option != NULL)
 			{
 				if(!command_temp_p)
 				{
@@ -101,14 +108,14 @@ void parse_prompt(t_shell *shell)
 				else
 					append(shell,current_option,&command,&shell->command_p);
 			}
-			free(current_option);
+			if(current_option)
+				free(current_option);
 			continue;
 		}
 		temp_prompt++;
 	}
 	shell->command_p = command_temp_p;
-	if (!ft_strchr(shell->prompt, '|'))
-		process_redirections(shell);
+	process_redirections(shell);
 	
 	free(start);
 }

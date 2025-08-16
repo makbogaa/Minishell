@@ -14,7 +14,7 @@ BFUNCS = ft_lstnew.c ft_lstadd_front.c ft_lstadd_back.c ft_lstsize.c \
 OBJECTS = $(FUNCS:.c=.o)
 BONUS_OBJECTS = $(BFUNCS:.c=.o)
 
-CC = gcc
+CC = cc
 CFLAGS = -Wall -Wextra -Werror
 REM = rm -f
 AR = ar rcs

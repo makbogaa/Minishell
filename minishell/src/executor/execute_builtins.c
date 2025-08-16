@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 22:10:03 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/14 16:02:34 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/16 15:32:48 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ static void	execute_with_redirections(t_shell *shell)
 	original_stdout = dup(STDOUT_FILENO);
 	if (setup_redirections(shell->command_p) == -1)
 	{
+		shell->last_exit_code = 1;
 		restore_std_fds(original_stdin, original_stdout);
 		return ;
 	}

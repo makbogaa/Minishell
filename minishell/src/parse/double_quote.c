@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 20:07:25 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/12 16:44:01 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/16 15:27:45 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static char *dq_expand_and_concat(const char *str, int start, int end,t_shell *s
         result = set_and_free(result, ft_strjoin(result ? result : "", tmp));
         free(tmp);
     }
-    return result;
+    return result ? result : ft_strdup("");
 }
 
 static void double_quote_loop(t_quote *quote,t_shell *shell)
@@ -100,35 +100,22 @@ char *double_quote_control(char **prompt,t_shell *shell)
 	char *temp;
 
 	result = double_quote(prompt,shell);
-	while(**prompt && **prompt != '\'' && **prompt != ' ')
-	{
-		if(**prompt == '"')
-		{
+	// Bash mantığı: quote bittikten sonra space yoksa devam eden karakterleri birleştir
+	while (**prompt && **prompt != ' ' && **prompt != '\t' && **prompt != '\n' &&
+		   **prompt != '>' && **prompt != '<' && **prompt != '|') {
+		if (**prompt == '"') {
 			temp = double_quote(prompt,shell);
 			result = set_and_free(result, ft_strjoin(result, temp));
 			free(temp);
-		}
-		else{
+		} else if (**prompt == '\'') {
+			temp = single_quote_control(prompt,shell);
+			result = set_and_free(result, ft_strjoin(result, temp));
+			free(temp);
+		} else {
 			temp = get_characters(prompt,shell);
 			result = set_and_free(result, ft_strjoin(result, temp));
 			free(temp);
 		}
-	}
-	if(**prompt == '\'' && *(*prompt + 1) != '\'')
-	{
-		temp = result;
-		result = ft_strjoin(temp, single_quote_control(prompt,shell));
-		if (temp)
-			free(temp);
-		
-	}
-	else if(**prompt)
-	{
-		
-		temp = result;
-		result = ft_strjoin(temp, get_characters(prompt,shell));
-		if (temp)
-			free(temp);
 	}
 	if (result == NULL)
 		return ft_strdup("");

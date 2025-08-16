@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 22:24:27 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/14 18:14:09 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/16 15:27:45 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,11 @@ char *expand_if_dollar(const char *str, int *i,t_shell *shell)
         (*i)+=2;
         return ft_itoa(shell->last_exit_code);
     }
+    // Bash $"..." syntax: locale-aware string (literal $ inside)
+    if (str[*i + 1] == '"') {
+        (*i)++;
+        return ft_strdup("$");
+    }
     if (!(ft_isalnum(str[j]) || str[j] == '_')) {
         (*i)++;
         return ft_strdup("$");
@@ -61,80 +66,58 @@ char *get_next_char(const char *str, int *i)
     return tmp;
 }
 
-char *get_characters(char **prompt,t_shell *shell)
+char *get_characters(char **prompt, t_shell *shell)
 {
-    char *result;
+    char *result = NULL;
     char *tmp;
-    char *new_result;
-    int i;
-    int old_i;
-
-    result = NULL;
-    tmp = NULL;
-    i = 0;
+    int i = 0;
+    
+    // Bash mantığı: space olmadıkça devam et (quotes dahil)
     while ((*prompt)[i] && !is_whitespace((*prompt)[i]) &&
-       (*prompt)[i] != '\'' && (*prompt)[i] != '"' &&
-       (*prompt)[i] != '>' && (*prompt)[i] != '<' && (*prompt)[i] != '|')
-    {
-        old_i = i;
-        if ((*prompt)[i] == '$')
-            tmp = expand_if_dollar(*prompt, &i,shell);
-        else
-            tmp = get_next_char(*prompt, &i);
-        
-        if (i <= old_i) 
-            i = old_i + 1;
-        if (tmp) {
-            new_result = ft_strjoin(result ? result : "", tmp);
-            if (result)
-                free(result);
-            result = new_result;
-            free(tmp);
-        }
-    }
-    *prompt += i;
-	if(**prompt == '\'' && *(*prompt + 1) != '\'')
-	{
-		tmp = result;
-		result = ft_strjoin(tmp,single_quote_control(prompt,shell));
-		if (tmp)
-			free(tmp);
-	}
-	else if(**prompt == '"' && *(*prompt + 1) != '"')
-	{
-		tmp = result;
-		result = ft_strjoin(tmp,double_quote_control(prompt,shell));
-		if (tmp)
-			free(tmp);
-	}
-    if(**prompt == '"' && *(*prompt + 1) && *(*prompt + 1) == '"')
-    {
-        *(prompt) += 2;
-        // Boş çift tırnak sonrası devam et - recursion olmadan
-        while (**prompt && !is_whitespace(**prompt) &&
-               **prompt != '\'' && **prompt != '"' &&
-               **prompt != '>' && **prompt != '<' && **prompt != '|')
-        {
-            int old_i = 0;
-            if (**prompt == '$')
-                tmp = expand_if_dollar(*prompt, &old_i, shell);
-            else
-                tmp = get_next_char(*prompt, &old_i);
-            *prompt += old_i;
-            
-            if (tmp) {
-                char *new_result = ft_strjoin(result ? result : "", tmp);
-                if (result)
-                    free(result);
-                result = new_result;
-                free(tmp);
+           (*prompt)[i] != '>' && (*prompt)[i] != '<' && (*prompt)[i] != '|') {
+        if ((*prompt)[i] == '"') {
+            // Quote'u double_quote_control ile parse et
+            char *quote_start = *prompt + i;
+            char *temp_prompt = quote_start;
+            tmp = double_quote_control(&temp_prompt, shell);
+            i = temp_prompt - *prompt;
+        } else if ((*prompt)[i] == '\'') {
+            // Quote'u single_quote_control ile parse et
+            char *quote_start = *prompt + i;
+            char *temp_prompt = quote_start;
+            tmp = single_quote_control(&temp_prompt, shell);
+            i = temp_prompt - *prompt;
+        } else if ((*prompt)[i] == '$') {
+            // Bash $"..." syntax özel durumu
+            if ((*prompt)[i + 1] == '"') {
+                // $"..." tüm string'ini parse et
+                int quote_end = i + 2;
+                while ((*prompt)[quote_end] && (*prompt)[quote_end] != '"')
+                    quote_end++;
+                if ((*prompt)[quote_end] == '"') {
+                    // $"content" → content'i literal olarak al
+                    tmp = ft_strndup(*prompt + i + 2, quote_end - i - 2);
+                    i = quote_end + 1;
+                } else {
+                    tmp = expand_if_dollar(*prompt, &i, shell);
+                }
+            } else {
+                tmp = expand_if_dollar(*prompt, &i, shell);
             }
+        } else {
+            tmp = get_next_char(*prompt, &i);
+        }
+        
+        if (tmp) {
+            char *new_result = ft_strjoin(result ? result : "", tmp);
+            free(result);
+            free(tmp);
+            result = new_result;
         }
     }
-   // Recursion kaldırıldı - infinite loop önleniyor
-    if (result == NULL)
-        return (ft_strdup(""));
-    return (result);
+    
+    *prompt += i;
+    return result ? result : ft_strdup("");
 }
 
 // Redirection operatörlerini parse eden fonksiyon

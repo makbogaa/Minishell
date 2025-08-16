@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:20:56 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/14 13:25:55 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/16 15:42:37 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,11 @@ int	builtin_echo(char **argv)
 {
 	int	i;
 	int	n_flag;
+	int	first_arg;
 
 	i = 1;
 	n_flag = 0;
+	first_arg = 1;
 	while (argv[i] && is_n_option(argv[i]))
 	{
 		n_flag = 1;
@@ -42,9 +44,10 @@ int	builtin_echo(char **argv)
 	}
 	while (argv[i])
 	{
-		write(1, argv[i], ft_strlen(argv[i]));
-		if (argv[i + 1])
+		if (!first_arg)
 			write(1, " ", 1);
+		write(1, argv[i], ft_strlen(argv[i]));
+		first_arg = 0;
 		i++;
 	}
 	if (!n_flag)

@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:59:51 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/14 19:30:28 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/16 16:12:47 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,10 +86,12 @@ void	execute_child_process(t_shell *shell, char *command,
 		t_pipe_info pipe_info)
 {
 	t_shell	tmp_shell;
+	char	*trimmed_command;
 
 	ft_memset(&tmp_shell, 0, sizeof(t_shell));
 	tmp_shell.envp = shell->envp;
-	tmp_shell.prompt = ft_strdup(command);
+	trimmed_command = ft_strtrim(command, " \t\n\r");
+	tmp_shell.prompt = trimmed_command;
 	parse_prompt(&tmp_shell);
 	setup_child_pipes(pipe_info.pipefds, pipe_info.n, pipe_info.i);
 	if (tmp_shell.command_p && tmp_shell.command_p->redirections)
