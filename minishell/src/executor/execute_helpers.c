@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 16:01:50 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/14 16:35:30 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/17 20:29:25 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ void	handle_builtin_command(t_shell *shell, char **params, char *cmd_name)
 	else if (ft_strcmp(cmd_name, "pwd") == 0)
 		shell->last_exit_code = builtin_pwd();
 	else if (ft_strcmp(cmd_name, "exit") == 0)
-		builtin_exit(params, shell->last_exit_code);
+		shell->last_exit_code = builtin_exit(shell, params,
+				shell->last_exit_code);
 	else if (ft_strcmp(cmd_name, "env") == 0)
 		shell->last_exit_code = builtin_env(shell->envp);
 	else if (ft_strcmp(cmd_name, "cd") == 0)

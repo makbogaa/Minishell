@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/16 16:08:35 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/17 20:24:47 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,6 +219,11 @@ int	get_prompt(t_shell *shell)
 	{
 		parse_prompt(shell);
 		add_history(shell->prompt);
+	}
+	else
+	{
+		// Boş girdi durumunda command_p'yi NULL yap
+		shell->command_p = NULL;
 	}
 	return 1;
 }

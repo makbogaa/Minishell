@@ -28,7 +28,9 @@ SRCS = minishell.c\
 		src/builtin/export.c \
 		src/builtin/export_utils.c \
 		src/builtin/unset.c \
-		src/free.c \
+		src/free/free.c \
+		src/free/free_two.c \
+		src/free/free_three.c \
 		src/utils/command_preprocessor.c \
 		src/parse/parse_utils.c\
 		src/parse/parse.c\
@@ -52,6 +54,8 @@ $(LIBFT):
 $(NAME): $(OBJS) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJS) -L$(LIBFT_DIR) -lft -lreadline -o $(NAME)
 
+leak: 
+	valgrind --leak-check=full --show-leak-kinds=all --suppressions=valgrind.supp --track-origins=yes ./$(NAME)
 valgrind:
 	make
 	valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(NAME)

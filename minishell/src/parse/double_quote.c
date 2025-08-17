@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 20:07:25 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/16 15:27:45 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/17 18:14:13 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,10 @@ static char *dq_expand_and_concat(const char *str, int start, int end,t_shell *s
             tmp = expand_if_dollar(str, &i,shell);
         else
             tmp = get_next_char(str, &i);
-        result = set_and_free(result, ft_strjoin(result ? result : "", tmp));
+        char *new_result = ft_strjoin(result ? result : "", tmp);
+        free(result);
         free(tmp);
+        result = new_result;
     }
     return result ? result : ft_strdup("");
 }
@@ -105,16 +107,22 @@ char *double_quote_control(char **prompt,t_shell *shell)
 		   **prompt != '>' && **prompt != '<' && **prompt != '|') {
 		if (**prompt == '"') {
 			temp = double_quote(prompt,shell);
-			result = set_and_free(result, ft_strjoin(result, temp));
+			char *new_result = ft_strjoin(result ? result : "", temp);
+			free(result);
 			free(temp);
+			result = new_result;
 		} else if (**prompt == '\'') {
 			temp = single_quote_control(prompt,shell);
-			result = set_and_free(result, ft_strjoin(result, temp));
+			char *new_result = ft_strjoin(result ? result : "", temp);
+			free(result);
 			free(temp);
+			result = new_result;
 		} else {
 			temp = get_characters(prompt,shell);
-			result = set_and_free(result, ft_strjoin(result, temp));
+			char *new_result = ft_strjoin(result ? result : "", temp);
+			free(result);
 			free(temp);
+			result = new_result;
 		}
 	}
 	if (result == NULL)

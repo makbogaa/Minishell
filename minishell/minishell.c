@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:27 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/15 00:51:25 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/17 19:08:27 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void	init_shell(t_shell *shell, char **envp)
 	if (!shell->envp)
 	{
 		perror("malloc");
+		free_shell(shell);
 		exit(EXIT_FAILURE);
 	}
 	i = 0;
@@ -57,6 +58,7 @@ void	init_shell(t_shell *shell, char **envp)
 		if (!shell->envp[i])
 		{
 			perror("strdup");
+			free_shell(shell);
 			exit(EXIT_FAILURE);
 		}
 		i++;

@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 22:24:27 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/16 15:27:45 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/17 15:05:20 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,13 +90,31 @@ char *get_characters(char **prompt, t_shell *shell)
         } else if ((*prompt)[i] == '$') {
             // Bash $"..." syntax özel durumu
             if ((*prompt)[i + 1] == '"') {
-                // $"..." tüm string'ini parse et
-                int quote_end = i + 2;
+                // $"..." için özel parsing - sadece quote içeriğini expand et
+                int quote_start = i + 2;
+                int quote_end = quote_start;
                 while ((*prompt)[quote_end] && (*prompt)[quote_end] != '"')
                     quote_end++;
                 if ((*prompt)[quote_end] == '"') {
-                    // $"content" → content'i literal olarak al
-                    tmp = ft_strndup(*prompt + i + 2, quote_end - i - 2);
+                    // Quote içindeki content'i expand et
+                    char *content = ft_strndup(*prompt + quote_start, quote_end - quote_start);
+                    char *expanded = NULL;
+                    int j = 0;
+                    while (content[j]) {
+                        char *part;
+                        if (content[j] == '$') {
+                            part = expand_if_dollar(content, &j, shell);
+                        } else {
+                            part = ft_strndup(content + j, 1);
+                            j++;
+                        }
+                        char *new_expanded = ft_strjoin(expanded ? expanded : "", part);
+                        free(expanded);
+                        free(part);
+                        expanded = new_expanded;
+                    }
+                    tmp = expanded ? expanded : ft_strdup("");
+                    free(content);
                     i = quote_end + 1;
                 } else {
                     tmp = expand_if_dollar(*prompt, &i, shell);

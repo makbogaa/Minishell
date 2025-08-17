@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:59:51 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/16 16:01:38 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/17 19:15:39 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	handle_pipe_commands(t_shell *shell)
 
 void	fork_and_execute(t_shell *shell, char **commands, int n, int *pipefds)
 {
-	pid_t		pids[256];
+	pid_t		pids[1024];
 	int			i;
 	t_pipe_info	pipe_info;
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/15 00:50:58 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/17 18:52:25 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ int 	builtin_pwd(void);
 int 	builtin_env(char **envp);
 int		builtin_export(char ***envp, char **argv);
 int		builtin_unset(t_shell *shell, char *name);
-void	builtin_exit(char **argv, int last_exit_code);
+int	builtin_exit(t_shell *shell, char **argv, int last_exit_code);
 
 //EXPORT UTILS
 int		is_valid_identifier(const char *str);
