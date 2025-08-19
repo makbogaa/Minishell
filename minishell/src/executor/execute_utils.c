@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:59:51 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/16 16:12:47 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/19 16:49:18 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,37 @@ static char	*check_path_in_dirs(char **paths, char *cmd)
 	return (NULL);
 }
 
-char	*get_path(char *cmd)
+static char	*get_env_var(char **envp, char *var_name)
+{
+	int	i;
+	int	len;
+
+	if (!envp || !var_name)
+		return (NULL);
+	len = ft_strlen(var_name);
+	i = 0;
+	while (envp[i])
+	{
+		if (ft_strncmp(envp[i], var_name, len) == 0 && envp[i][len] == '=')
+			return (envp[i] + len + 1);
+		i++;
+	}
+	return (NULL);
+}
+
+char	*get_path(char *cmd, char **envp)
 {
 	char	*path_env;
 	char	**paths;
 	char	*result;
 
 	if (ft_strchr(cmd, '/'))
-		return (ft_strdup(cmd));
-	path_env = getenv("PATH");
+	{
+		if (access(cmd, X_OK) == 0)
+			return (ft_strdup(cmd));
+		return (NULL);
+	}
+	path_env = get_env_var(envp, "PATH");
 	if (!path_env)
 		return (NULL);
 	paths = ft_split(path_env, ':');
@@ -80,29 +102,4 @@ void	cleanup_and_wait(int *pipefds, int n, pid_t last_pid, t_shell *shell)
 		wait(NULL);
 		i++;
 	}
-}
-
-void	execute_child_process(t_shell *shell, char *command,
-		t_pipe_info pipe_info)
-{
-	t_shell	tmp_shell;
-	char	*trimmed_command;
-
-	ft_memset(&tmp_shell, 0, sizeof(t_shell));
-	tmp_shell.envp = shell->envp;
-	trimmed_command = ft_strtrim(command, " \t\n\r");
-	tmp_shell.prompt = trimmed_command;
-	parse_prompt(&tmp_shell);
-	setup_child_pipes(pipe_info.pipefds, pipe_info.n, pipe_info.i);
-	if (tmp_shell.command_p && tmp_shell.command_p->redirections)
-	{
-		if (setup_redirections(tmp_shell.command_p) != 0)
-		{
-			free_shell(&tmp_shell);
-			exit(1);
-		}
-	}
-	execute_single_command(&tmp_shell);
-	free_shell(&tmp_shell);
-	exit(tmp_shell.last_exit_code);
 }

@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/17 18:52:25 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/19 16:47:25 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,9 @@ int		open_file(char *filename, int flags);
 int		get_prompt(t_shell *shell);
 void 	parse_prompt(t_shell *shell);
 char	*single_quote_control(char **prompt,t_shell *shell);
+char	*single_quote(char **prompt);
 char	*double_quote_control(char **prompt,t_shell *shell);
+char	*double_quote(char **prompt, t_shell *shell);
 t_quote *quote_init(void);
 int		counter_quote(char *str, char *quoter);
 char 	**copy_multiple_input(char **multiple_input,char *temp, int len);
@@ -149,7 +151,7 @@ int		is_whitespace(char c);
 //EXECUTE
 void 	execute(t_shell *shell);
 void 	execute_single_command(t_shell *shell);
-void 	handle_command_execution(t_shell *shell, char **params);
+int 	handle_command_execution(t_shell *shell, char **params);
 int 	setup_and_restore_redirections(t_shell *shell, int *original_stdin, int *original_stdout, int setup_mode);
 int 	run(t_command *command,char **params,t_shell *shell);
 void 	execute_commands(t_shell *shell, char **commands, int n);
@@ -172,23 +174,24 @@ void	free_command(t_shell *shell);
 int		builtin(t_command **command);
 int		builtin_echo(char **argv);
 int		builtin_cd(t_shell *shell, char **args);
-int 	builtin_pwd(void);
-int 	builtin_env(char **envp);
-int		builtin_export(char ***envp, char **argv);
+int 	builtin_pwd(char **args);
+int 	builtin_env(char **params, char **envp);
+int		builtin_export(t_shell *shell, char **args);
 int		builtin_unset(t_shell *shell, char *name);
 int	builtin_exit(t_shell *shell, char **argv, int last_exit_code);
 
 //EXPORT UTILS
-int		is_valid_identifier(const char *str);
-int		update_env(char ***envp, const char *name, const char *value);
-void	add_env(char ***envp, const char *key_value);
-int		print_invalid_identifier(char *arg);
-int		export_single_var_helper(char ***envp, char *key, char *arg, char *equal_pos);
+int		export_single_var(char ***envp, char *arg);
+void	print_export_list(char **export_arr, int fd);
+void	sort_export_list(char **export_arr);
+int		count_env_vars(char **envp);
+char	**create_export_array(char **envp);
 
 //ENVIRONMENT
 char	*mini_getenv(const char *key, char **envp);
 char 	**mini_setenv(char **envp, const char *key, const char *value, int overwrite);
 char	**ft_double_extension(char **matrix, char *new_str);
+void	increment_shlvl(t_shell *shell);
 
 //executor/execute.c
 void	execute(t_shell *shell);
@@ -198,15 +201,15 @@ int		has_pipe_outside_quotes(char *str);
 void	fork_and_execute(t_shell *shell, char **commands, int n, int *pipefds);
 
 //executor/execute_utils.c
-char	*get_path(char *cmd);
+char	*get_path(char *cmd, char **envp);
 void	execute_commands(t_shell *shell, char **commands, int n);
 void	cleanup_and_wait(int *pipefds, int n, pid_t last_pid, t_shell *shell);
 void	execute_child_process(t_shell *shell, char *command, t_pipe_info pipe_info);
 
 //executor/execute_builtins.c
-void	handle_builtin_command(t_shell *shell, char **params, char *cmd_name);
+int	handle_builtin_command(t_shell *shell, char **params, char *cmd_name);
 char	**get_params(t_command *command);
-void	handle_command_execution(t_shell *shell, char **params);
+int	handle_command_execution(t_shell *shell, char **params);
 void	handle_single_command_exec(t_shell *shell);
 void	execute_single_command(t_shell *shell);
 
@@ -256,4 +259,5 @@ char		*normalize_redirections(char *command);
 
 //ERROR
 void exit_with_error(char *msg);
+
 #endif

@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/17 20:24:47 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/19 13:59:46 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,13 @@ void parse_prompt(t_shell *shell)
 	start = temp_prompt;
 	while(temp_prompt && *temp_prompt)
 	{
+		// Whitespace'leri skip et
+		while(*temp_prompt && is_whitespace(*temp_prompt))
+			temp_prompt++;
+		
+		if (!*temp_prompt)
+			break;
+			
 		parse_func = NULL;
 		if(*temp_prompt == '\'')
 			parse_func = single_quote_control;
@@ -92,8 +99,9 @@ void parse_prompt(t_shell *shell)
 			temp_prompt++; // Pipe karakterini skip et
 			continue;
 		}
-		else if (!is_whitespace(*temp_prompt))
+		else
 			parse_func = get_characters;
+		
 		if(parse_func)
 		{
 			current_option = parse_func(&temp_prompt,shell);
@@ -110,9 +118,7 @@ void parse_prompt(t_shell *shell)
 			}
 			if(current_option)
 				free(current_option);
-			continue;
 		}
-		temp_prompt++;
 	}
 	shell->command_p = command_temp_p;
 	process_redirections(shell);

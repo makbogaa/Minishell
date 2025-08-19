@@ -6,31 +6,13 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 13:40:00 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/14 19:22:31 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/19 13:22:03 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	is_valid_identifier(const char *str)
-{
-	int	i;
-
-	if (!str || !*str)
-		return (0);
-	if (!ft_isalpha(str[0]) && str[0] != '_')
-		return (0);
-	i = 1;
-	while (str[i] && str[i] != '=')
-	{
-		if (!ft_isalnum(str[i]) && str[i] != '_')
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-int	update_env(char ***envp, const char *key, const char *value)
+static int	update_env_var(char ***envp, const char *key, const char *value)
 {
 	int		i;
 	int		key_len;
@@ -57,7 +39,7 @@ int	update_env(char ***envp, const char *key, const char *value)
 	return (0);
 }
 
-void	add_env(char ***envp, const char *key_value)
+static void	add_env_var(char ***envp, const char *key_value)
 {
 	int		i;
 	int		size;
@@ -81,32 +63,22 @@ void	add_env(char ***envp, const char *key_value)
 	*envp = new_envp;
 }
 
-int	print_invalid_identifier(char *arg)
+int	export_single_var(char ***envp, char *arg)
 {
-	ft_putstr_fd("minishell: export: `", 2);
-	ft_putstr_fd(arg, 2);
-	ft_putstr_fd("': not a valid identifier\n", 2);
-	return (1);
-}
+	char	*equal_pos;
+	char	*key;
 
-int	export_single_var_helper(char ***envp, char *key, char *arg,
-	char *equal_pos)
-{
-	char	*export_entry;
-
+	equal_pos = ft_strchr(arg, '=');
 	if (equal_pos)
 	{
-		if (!update_env(envp, key, equal_pos + 1))
-			add_env(envp, arg);
+		key = ft_substr(arg, 0, equal_pos - arg);
+		if (!key)
+			return (1);
+		if (!update_env_var(envp, key, equal_pos + 1))
+			add_env_var(envp, arg);
+		free(key);
 	}
 	else
-	{
-		export_entry = ft_strjoin(key, "=__EXPORT_ONLY__");
-		if (export_entry)
-		{
-			add_env(envp, export_entry);
-			free(export_entry);
-		}
-	}
+		add_env_var(envp, arg);
 	return (0);
 }

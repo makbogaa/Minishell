@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/17 16:30:18 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/14 19:28:26 by makboga          ###   ########.fr       */
+/*   Created: 2025/08/19 15:01:49 by makboga           #+#    #+#             */
+/*   Updated: 2025/08/19 15:01:51 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,7 @@ static int	handle_slash_command(t_command *cmd, char **args, t_shell *sh)
 {
 	struct stat	buffer;
 
-	stat(cmd->command, &buffer);
-	if (errno == ENOENT)
+	if (stat(cmd->command, &buffer) == -1)
 	{
 		write(STDERR_FILENO, "minishell: ", 11);
 		write(STDERR_FILENO, cmd->command, ft_strlen(cmd->command));
@@ -50,12 +49,11 @@ static int	handle_regular_command(t_command *cmd, char **args, t_shell *sh)
 {
 	char	*path;
 
-	path = get_path(cmd->command);
+	path = get_path(cmd->command, sh->envp);
 	if (!path)
 	{
-		write(STDERR_FILENO, "minishell: command not found: ", 31);
 		write(STDERR_FILENO, cmd->command, ft_strlen(cmd->command));
-		write(STDERR_FILENO, "\n", 1);
+		write(STDERR_FILENO, ": command not found\n", 20);
 		exit(127);
 	}
 	if (!cmd->command[0])

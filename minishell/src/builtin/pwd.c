@@ -6,16 +6,17 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:38:48 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/14 13:39:55 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/19 15:14:55 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	builtin_pwd(void)
+int	builtin_pwd(char **args)
 {
 	char	*cwd;
 
+	(void)args;
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{

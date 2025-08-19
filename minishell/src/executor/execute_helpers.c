@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/14 16:01:50 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/17 20:29:25 by makboga          ###   ########.fr       */
+/*   Created: 2025/08/19 15:03:09 by makboga           #+#    #+#             */
+/*   Updated: 2025/08/19 16:49:12 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,25 +34,29 @@ int	has_pipe_outside_quotes(char *str)
 	return (0);
 }
 
-void	handle_builtin_command(t_shell *shell, char **params, char *cmd_name)
+int	handle_builtin_command(t_shell *shell, char **params, char *cmd_name)
 {
 	if (ft_strcmp(cmd_name, "echo") == 0)
 		shell->last_exit_code = builtin_echo(params);
 	else if (ft_strcmp(cmd_name, "pwd") == 0)
-		shell->last_exit_code = builtin_pwd();
+		shell->last_exit_code = builtin_pwd(params);
 	else if (ft_strcmp(cmd_name, "exit") == 0)
+	{
 		shell->last_exit_code = builtin_exit(shell, params,
 				shell->last_exit_code);
+		return (1);
+	}
 	else if (ft_strcmp(cmd_name, "env") == 0)
-		shell->last_exit_code = builtin_env(shell->envp);
+		shell->last_exit_code = builtin_env(params, shell->envp);
 	else if (ft_strcmp(cmd_name, "cd") == 0)
 		shell->last_exit_code = builtin_cd(shell, params);
 	else if (ft_strcmp(cmd_name, "export") == 0)
-		shell->last_exit_code = builtin_export(&shell->envp, params);
+		shell->last_exit_code = builtin_export(shell, params);
 	else if (ft_strcmp(cmd_name, "unset") == 0)
 		shell->last_exit_code = builtin_unset(shell, params[1]);
 	else
 		printf("command not found: %s\n", cmd_name);
+	return (0);
 }
 
 char	**get_params(t_command *command)
@@ -73,6 +77,8 @@ int	count_parameters(t_command *command)
 	t_parameters	*tmp;
 	int				count;
 
+	if (!command)
+		return (0);
 	count = 0;
 	tmp = command->parameters_p;
 	while (tmp && tmp->parameter)
@@ -88,6 +94,11 @@ void	fill_params_array(char **params, t_command *command, int count)
 	t_parameters	*tmp;
 	int				i;
 
+	if (!command)
+	{
+		params[0] = NULL;
+		return ;
+	}
 	params[0] = command->command;
 	i = 1;
 	tmp = command->parameters_p;

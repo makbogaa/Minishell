@@ -1,3 +1,3 @@
-[1;34mmakboga@k1m37s05.42istanbul.com.tr:[1;35m~/Desktop/mini_son/minishell/42_minishell_tester[0m$ echo ""$?""
-0
-[1;34mmakboga@k1m37s05.42istanbul.com.tr:[1;35m~/Desktop/mini_son/minishell/42_minishell_tester[0m$ exit
+[1;34mmakboga@k1m36s02.42istanbul.com.tr:[1;35m~/Desktop/mini_son/minishell/42_minishell_tester[0m$ echo ''$?''"42"
+042
+[1;34mmakboga@k1m36s02.42istanbul.com.tr:[1;35m~/Desktop/mini_son/minishell/42_minishell_tester[0m$ exit

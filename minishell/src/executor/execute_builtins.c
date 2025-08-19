@@ -6,18 +6,22 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 22:10:03 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/16 15:32:48 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/19 16:43:49 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	handle_command_execution(t_shell *shell, char **params)
+int	handle_command_execution(t_shell *shell, char **params)
 {
 	char	*cmd_name;
+	int		should_exit;
 
 	if (shell->command_p->builtin == 2 || shell->command_p->builtin == 1)
+	{
 		shell->last_exit_code = run(shell->command_p, params, shell);
+		return (0);
+	}
 	else if (shell->command_p->builtin == 3)
 	{
 		cmd_name = ft_strrchr(shell->command_p->command, '/');
@@ -25,8 +29,10 @@ void	handle_command_execution(t_shell *shell, char **params)
 			cmd_name++;
 		else
 			cmd_name = shell->command_p->command;
-		handle_builtin_command(shell, params, cmd_name);
+		should_exit = handle_builtin_command(shell, params, cmd_name);
+		return (should_exit);
 	}
+	return (0);
 }
 
 static void	restore_std_fds(int original_stdin, int original_stdout)
@@ -42,6 +48,7 @@ static void	execute_with_redirections(t_shell *shell)
 	char	**params;
 	int		original_stdin;
 	int		original_stdout;
+	int		should_exit;
 
 	original_stdin = dup(STDIN_FILENO);
 	original_stdout = dup(STDOUT_FILENO);
@@ -52,20 +59,33 @@ static void	execute_with_redirections(t_shell *shell)
 		return ;
 	}
 	params = get_params(shell->command_p);
-	handle_command_execution(shell, params);
+	should_exit = handle_command_execution(shell, params);
 	free(params);
 	restore_std_fds(original_stdin, original_stdout);
+	if (should_exit)
+	{
+		free_shell(shell);
+		exit(shell->last_exit_code);
+	}
 }
 
 void	handle_single_command_exec(t_shell *shell)
 {
 	char	**params;
+	int		should_exit;
 
-	if (!shell->command_p || !shell->command_p->redirections)
+	if (!shell->command_p)
+		return ;
+	if (!shell->command_p->redirections)
 	{
 		params = get_params(shell->command_p);
-		handle_command_execution(shell, params);
+		should_exit = handle_command_execution(shell, params);
 		free(params);
+		if (should_exit)
+		{
+			free_shell(shell);
+			exit(shell->last_exit_code);
+		}
 		return ;
 	}
 	execute_with_redirections(shell);
@@ -74,10 +94,16 @@ void	handle_single_command_exec(t_shell *shell)
 void	execute_single_command(t_shell *shell)
 {
 	char	**params;
+	int		should_exit;
 
 	if (!shell || !shell->command_p)
 		return ;
 	params = get_params(shell->command_p);
-	handle_command_execution(shell, params);
+	should_exit = handle_command_execution(shell, params);
 	free(params);
+	if (should_exit)
+	{
+		free_shell(shell);
+		exit(shell->last_exit_code);
+	}
 }

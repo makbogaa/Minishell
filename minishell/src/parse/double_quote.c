@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 20:07:25 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/17 18:14:13 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/19 15:14:55 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static void double_quote_loop(t_quote *quote,t_shell *shell)
     }
 }
 
-static char *double_quote(char **prompt,t_shell *shell)
+char *double_quote(char **prompt,t_shell *shell)
 {
 	char	*start;
 	char	*end;

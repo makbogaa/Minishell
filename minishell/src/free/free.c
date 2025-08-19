@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:23:54 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/17 17:45:15 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/19 16:49:42 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void	free_shell(t_shell *shell)
 		free(shell->hostname);
 	free_shell_arrays(shell);
 	free_command(shell);
+	clear_history();
 }
 
 static void	free_single_command(t_command *command)

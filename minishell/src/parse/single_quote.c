@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 10:36:58 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/17 18:14:13 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/19 15:14:55 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static void single_quote_loop(t_quote *quote)
 	}
 }
 
-static char *single_quote(char **prompt)
+char *single_quote(char **prompt)
 {
 	char	*start;
 	char	*end;

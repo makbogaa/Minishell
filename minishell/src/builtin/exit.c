@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:47:57 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/17 20:28:23 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/19 15:42:45 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,5 @@ int	builtin_exit(t_shell *shell, char **argv, int last_exit_code)
 		status = ft_atoi(argv[1]);
 	}
 	shell->last_exit_code = status;
-	free_shell(shell);
-	exit(status);
+	return (status);
 }

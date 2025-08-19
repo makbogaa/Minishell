@@ -6,36 +6,11 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 16:12:49 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/14 16:16:51 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/19 13:39:36 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-char	**ft_double_extension(char **matrix, char *new_str)
-{
-	int		i;
-	char	**new_matrix;
-
-	if (!new_str)
-		return (matrix);
-	i = 0;
-	while (matrix && matrix[i])
-		i++;
-	new_matrix = malloc(sizeof(char *) * (i + 2));
-	if (!new_matrix)
-		return (NULL);
-	i = 0;
-	while (matrix && matrix[i])
-	{
-		new_matrix[i] = matrix[i];
-		i++;
-	}
-	new_matrix[i] = new_str;
-	new_matrix[i + 1] = NULL;
-	free(matrix);
-	return (new_matrix);
-}
 
 char	*mini_getenv(const char *key, char **envp)
 {
@@ -118,4 +93,27 @@ char	**mini_unsetenv(char *key, char **envp)
 	new_env[j] = NULL;
 	free(envp);
 	return (new_env);
+}
+
+void	increment_shlvl(t_shell *shell)
+{
+	char	*current_shlvl;
+	int		shlvl_value;
+	char	*new_shlvl;
+	char	*shlvl_str;
+
+	current_shlvl = mini_getenv("SHLVL", shell->envp);
+	if (current_shlvl)
+		shlvl_value = ft_atoi(current_shlvl) + 1;
+	else
+		shlvl_value = 1;
+	new_shlvl = ft_itoa(shlvl_value);
+	if (!new_shlvl)
+		return ;
+	shlvl_str = ft_strjoin("SHLVL=", new_shlvl);
+	free(new_shlvl);
+	if (!shlvl_str)
+		return ;
+	export_single_var(&(shell->envp), shlvl_str);
+	free(shlvl_str);
 }
