@@ -22,6 +22,7 @@ SRCS = minishell.c\
 		src/builtin/builtin.c \
 		src/builtin/env.c \
 		src/builtin/cd.c \
+		src/builtin/cd_utils.c \
 		src/builtin/echo.c \
 		src/builtin/pwd.c \
 		src/builtin/exit.c \

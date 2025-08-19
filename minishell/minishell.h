@@ -6,28 +6,28 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/19 16:47:25 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/19 19:02:10 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
-#define MINISHELL_H
+# define MINISHELL_H
 
-#include "libft/libft.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <string.h>
-#include <errno.h>
-#include <signal.h>
-#include <sys/wait.h>
- #include <sys/stat.h> 
-#include <fcntl.h>
+# include "libft/libft.h"
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <string.h>
+# include <errno.h>
+# include <signal.h>
+# include <sys/wait.h>
+# include <sys/stat.h> 
+# include <fcntl.h>
 
 # ifndef BUFFER_SIZE
-# define BUFFER_SIZE	1024
+#  define BUFFER_SIZE 1024
 # endif
 
 # define RED "\033[0;31m"
@@ -44,8 +44,8 @@
 
 typedef struct s_parameters
 {
-	char *parameter;
-	struct s_parameters *next;
+	char				*parameter;
+	struct s_parameters	*next;
 }t_parameters;
 
 typedef struct s_pipe_info
@@ -55,7 +55,6 @@ typedef struct s_pipe_info
 	int	i;
 }t_pipe_info;
 
-// Redirection türleri
 typedef enum e_redirect_type
 {
 	REDIRECT_NONE,
@@ -63,16 +62,15 @@ typedef enum e_redirect_type
 	REDIRECT_OUT,       // >
 	REDIRECT_APPEND,    // >>
 	REDIRECT_HEREDOC    // <<
-} t_redirect_type;
+}t_redirect_type;
 
-// Redirection yapısı
 typedef struct s_redirect
 {
-	t_redirect_type type;
-	char *filename;
-	int fd;
-	struct s_redirect *next;
-} t_redirect;
+	t_redirect_type		type;
+	char				*filename;
+	int					fd;
+	struct s_redirect	*next;
+}t_redirect;
 
 typedef struct s_command
 {
@@ -174,11 +172,13 @@ void	free_command(t_shell *shell);
 int		builtin(t_command **command);
 int		builtin_echo(char **argv);
 int		builtin_cd(t_shell *shell, char **args);
+int		update_pwd_vars(t_shell *shell, char *oldpwd);
+char	*get_target_directory(t_shell *shell, char **args, int *should_free);
 int 	builtin_pwd(char **args);
 int 	builtin_env(char **params, char **envp);
 int		builtin_export(t_shell *shell, char **args);
 int		builtin_unset(t_shell *shell, char *name);
-int	builtin_exit(t_shell *shell, char **argv, int last_exit_code);
+int		builtin_exit(t_shell *shell, char **argv, int last_exit_code);
 
 //EXPORT UTILS
 int		export_single_var(char ***envp, char *arg);
