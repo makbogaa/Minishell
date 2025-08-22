@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_three.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 16:59:38 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/17 17:00:29 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/22 22:29:25 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,20 +32,20 @@ void	free_quote(t_quote *quote)
 {
 	if (!quote)
 		return ;
-	free(quote->current_parameter);
-	free_multiple_input(quote->parameters);
+	free(quote->current_content);
+	free_multiple_input(quote->contents);
 	free(quote);
 }
 
-void	free_parameters(t_parameters *params)
+void	free_contents(t_list *params)
 {
-	t_parameters	*temp;
+	t_list	*temp;
 
 	while (params)
 	{
 		temp = params;
 		params = params->next;
-		free(temp->parameter);
+		free(temp->content);
 		free(temp);
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 16:03:40 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/07/22 02:03:55 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/22 22:29:25 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,20 @@ void free_multiple_input(char **multiple_input)
 	}
 	free(multiple_input);
 }
-void print_parameters(t_quote *quote)
+void print_list(t_quote *quote)
 {
 	int	i;
 	int	j;
 	
 	i = 0;
 	j = 0;
-	while (quote->parameters && quote->parameters[i])
+	while (quote->contents && quote->contents[i])
 	{
 		printf("\n");
 		j = 0;
-		while(quote->parameters[i][j])
-			if(quote->parameters[i][j] != '\'')
-				write(STDOUT_FILENO, &quote->parameters[i][j++], 1);
+		while(quote->contents[i][j])
+			if(quote->contents[i][j] != '\'')
+				write(STDOUT_FILENO, &quote->contents[i][j++], 1);
 			else
 				j++;
 		i++;
@@ -81,8 +81,8 @@ t_quote *quote_init(void)
 	quote = malloc(sizeof(t_quote));
 	if (!quote)
 		exit_with_error("Error initializing quote structure");
-	quote->parameters = NULL;
-	quote->current_parameter = NULL;
+	quote->contents = NULL;
+	quote->current_content = NULL;
 	quote->flag = 0;
 	quote->len = 0;
 	return (quote);

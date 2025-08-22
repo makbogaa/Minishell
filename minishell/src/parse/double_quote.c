@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   double_quote.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 20:07:25 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/19 15:14:55 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/22 22:29:25 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,23 +42,23 @@ static void double_quote_loop(t_quote *quote,t_shell *shell)
 {
 	char *expanded;
 	
-	quote->current_parameter = set_and_free(quote->current_parameter, readline("> "));
-    while(quote->current_parameter)
+	quote->current_content = set_and_free(quote->current_content, readline("> "));
+    while(quote->current_content)
     {
         quote->len++;
-        if(ft_strchr(quote->current_parameter, '"') && counter_quote(quote->current_parameter, "\"") % 2 == 1)
+        if(ft_strchr(quote->current_content, '"') && counter_quote(quote->current_content, "\"") % 2 == 1)
         {
-            expanded = dq_expand_and_concat(quote->current_parameter, 0, ft_strlen(quote->current_parameter),shell);
+            expanded = dq_expand_and_concat(quote->current_content, 0, ft_strlen(quote->current_content),shell);
 
-            quote->parameters = copy_multiple_input(quote->parameters, expanded, quote->len);
+            quote->contents = copy_multiple_input(quote->contents, expanded, quote->len);
             free(expanded);
             break;
         }
-        expanded = dq_expand_and_concat(quote->current_parameter, 0, ft_strlen(quote->current_parameter),shell);
-        quote->parameters = copy_multiple_input(quote->parameters, expanded, quote->len);
+        expanded = dq_expand_and_concat(quote->current_content, 0, ft_strlen(quote->current_content),shell);
+        quote->contents = copy_multiple_input(quote->contents, expanded, quote->len);
         free(expanded);
-        quote->parameters = copy_multiple_input(quote->parameters, "\n", ++quote->len);
-        quote->current_parameter = set_and_free(quote->current_parameter, readline("> "));
+        quote->contents = copy_multiple_input(quote->contents, "\n", ++quote->len);
+        quote->current_content = set_and_free(quote->current_content, readline("> "));
     }
 }
 
@@ -76,14 +76,14 @@ char *double_quote(char **prompt,t_shell *shell)
 	if (!end)
 	{
 		expanded_first = dq_expand_and_concat(start + 1, 0, ft_strlen(start + 1),shell);
-		quote->parameters = copy_multiple_input(quote->parameters, expanded_first, ++quote->len);
+		quote->contents = copy_multiple_input(quote->contents, expanded_first, ++quote->len);
 		free(expanded_first);
-		quote->parameters = copy_multiple_input(quote->parameters, "\n", ++quote->len);
+		quote->contents = copy_multiple_input(quote->contents, "\n", ++quote->len);
 		double_quote_loop(quote,shell);
 	}
 	if(quote->len > 0)
 	{
-		result = string_concatation_heap(quote->parameters);
+		result = string_concatation_heap(quote->contents);
 		result[ft_strlen(result) - 1] = '\0';
 		*prompt = start + ft_strlen(start);
 		free_quote(quote);

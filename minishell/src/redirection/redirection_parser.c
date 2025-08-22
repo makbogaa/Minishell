@@ -3,44 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_parser.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:45:00 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/16 15:47:46 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/22 22:29:25 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-static void	cleanup_params(t_parameters *param, t_parameters *to_remove)
+static void	cleanup_params(t_list *param, t_list *to_remove)
 {
-	free(param->parameter);
+	free(param->content);
 	free(param);
-	free(to_remove->parameter);
+	free(to_remove->content);
 	free(to_remove);
 }
 
-static void	update_param_links(t_command *cmd, t_parameters *prev_param,
-		t_parameters *next_param)
+static void	update_param_links(t_command *cmd, t_list *prev_param,
+		t_list *next_param)
 {
 	if (prev_param)
 		prev_param->next = next_param;
 	else
-		cmd->parameters_p = next_param;
+		cmd->contents_p = next_param;
 }
 
-int	handle_param_redirect(t_command *cmd, t_parameters *param,
-		t_parameters *prev_param)
+int	handle_param_redirect(t_command *cmd, t_list *param,
+		t_list *prev_param)
 {
 	t_redirect		*redirect;
-	t_parameters	*next_param;
-	t_parameters	*to_remove;
+	t_list	*next_param;
+	t_list	*to_remove;
 
-	if (!param->parameter || !is_redirect_token(param->parameter)
-		|| !param->next || !param->next->parameter)
+	if (!param->content || !is_redirect_token(param->content)
+		|| !param->next || !param->next->content)
 		return (0);
-	redirect = create_redirect(get_redirect_type(param->parameter),
-			param->next->parameter);
+	redirect = create_redirect(get_redirect_type(param->content),
+			param->next->content);
 	if (!redirect)
 		return (0);
 	add_redirect(cmd, redirect);
@@ -74,7 +74,7 @@ void	process_redirections(t_shell *shell)
 	cmd = shell->command_p;
 	while (cmd)
 	{
-		if (cmd->parameters_p)
+		if (cmd->contents_p)
 			process_param_redirections(cmd);
 		process_token_redirections(cmd);
 		cmd = cmd->next;

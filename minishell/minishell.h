@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/19 20:12:07 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/22 22:35:53 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,6 @@
 # define BMAGENTA "\033[1;35m"
 # define RESET "\033[0m"
 
-typedef struct s_parameters
-{
-	char				*parameter;
-	struct s_parameters	*next;
-}t_parameters;
-
 typedef struct s_pipe_info
 {
 	int	*pipefds;
@@ -75,7 +69,7 @@ typedef struct s_redirect
 typedef struct s_command
 {
 	char				*command;
-	struct s_parameters	*parameters_p;
+	t_list				*contents_p;
 	char				*token;
 	int					token_flag;
 	int					flag;
@@ -101,8 +95,8 @@ typedef struct s_shell
 
 typedef struct s_quote
 {
-	char	**parameters;
-	char	*current_parameter;
+	char	**contents;
+	char	*current_content;
 	int		flag;
 	int		len;
 }t_quote;
@@ -139,7 +133,7 @@ char			*get_next_char(const char *str, int *i);
 char			*string_concatation_heap(char **str);
 void			append_command(t_shell *shell, char *str, int builtin,
 					t_command **temp);
-void			append_parameter(t_parameters *new_param, t_command **temp);
+void			append_content(t_list *new_param, t_command **temp);
 void			append_token(char *str, t_command **temp);
 int				prompt_type_control_loop(char **control_list, int type,
 					char *str);
@@ -215,7 +209,7 @@ char			*strip_path(char *cmd);
 int				create_pipes(int **pipefds, int n);
 void			setup_child_pipes(int *pipefds, int n, int i);
 int				check_pipe_syntax(char *str);
-int				count_parameters(t_command *command);
+int				count_list(t_command *command);
 void			fill_params_array(char **params, t_command *command, int count);
 char			*string_concatation(char **str);
 
@@ -230,10 +224,10 @@ t_redirect_type	get_redirect_type(char *token);
 void			process_redirections(t_shell *shell);
 void			process_param_redirections(t_command *cmd);
 void			process_token_redirections(t_command *cmd);
-void			remove_parameter(t_parameters **head, t_parameters *to_remove);
+void			remove_content(t_list **head, t_list *to_remove);
 char			*parse_redirect_token(char **prompt);
-int				handle_param_redirect(t_command *cmd, t_parameters *param,
-					t_parameters *prev_param);
+int				handle_param_redirect(t_command *cmd, t_list *param,
+					t_list *prev_param);
 int				process_input_redirections(t_redirect *current, int *input_fd,
 					int *output_fd);
 int				process_output_redirections(t_redirect *current, int *input_fd,

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_apply.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 20:35:00 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/14 19:20:44 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/22 22:29:25 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,10 @@ int	apply_redirections(int input_fd, int output_fd)
 
 void	process_param_redirections(t_command *cmd)
 {
-	t_parameters	*param;
-	t_parameters	*prev_param;
+	t_list	*param;
+	t_list	*prev_param;
 
-	param = cmd->parameters_p;
+	param = cmd->contents_p;
 	prev_param = NULL;
 	while (param)
 	{
@@ -67,7 +67,7 @@ void	process_param_redirections(t_command *cmd)
 			if (prev_param)
 				param = prev_param->next;
 			else
-				param = cmd->parameters_p;
+				param = cmd->contents_p;
 			continue ;
 		}
 		prev_param = param;

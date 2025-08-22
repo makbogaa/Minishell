@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:23:54 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/19 16:49:42 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/22 22:29:25 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,16 @@ void	free_shell(t_shell *shell)
 
 static void	free_single_command(t_command *command)
 {
-	t_parameters	*param;
-	t_parameters	*next_param;
+	t_list	*param;
+	t_list	*next_param;
 
-	if (command->parameters_p)
+	if (command->contents_p)
 	{
-		param = command->parameters_p;
+		param = command->contents_p;
 		while (param)
 		{
 			next_param = param->next;
-			free(param->parameter);
+			free(param->content);
 			free(param);
 			param = next_param;
 		}

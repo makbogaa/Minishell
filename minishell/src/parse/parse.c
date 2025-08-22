@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/19 19:18:13 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/22 22:29:25 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,20 +39,20 @@ void append(t_shell *shell, char *str,int *command, t_command **temp)
     {
         if (*temp)
         {
-            t_parameters *new_param = malloc(sizeof(t_parameters));
-            new_param->parameter = ft_strdup(str);
+            t_list *new_param = malloc(sizeof(t_list));
+            new_param->content = ft_strdup(str);
             new_param->next = NULL;
-            append_parameter(new_param,temp);
+            append_content(new_param,temp);
         }
 	}
     else
     {
         if (*temp)
         {
-            t_parameters *new_param = malloc(sizeof(t_parameters));
-            new_param->parameter = ft_strdup(str);
+            t_list *new_param = malloc(sizeof(t_list));
+            new_param->content = ft_strdup(str);
             new_param->next = NULL;
-            append_parameter(new_param,temp);
+            append_content(new_param,temp);
         }
     }
     

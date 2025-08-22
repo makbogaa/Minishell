@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_helpers.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 15:03:09 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/19 16:49:12 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/22 22:34:24 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ char	**get_params(t_command *command)
 	char	**params;
 	int		count;
 
-	count = count_parameters(command);
+	count = count_list(command);
 	params = malloc(sizeof(char *) * (count + 2));
 	if (!params)
 		return (NULL);
@@ -72,16 +72,16 @@ char	**get_params(t_command *command)
 	return (params);
 }
 
-int	count_parameters(t_command *command)
+int	count_list(t_command *command)
 {
-	t_parameters	*tmp;
+	t_list	*tmp;
 	int				count;
 
 	if (!command)
 		return (0);
 	count = 0;
-	tmp = command->parameters_p;
-	while (tmp && tmp->parameter)
+	tmp = command->contents_p;
+	while (tmp && tmp->content)
 	{
 		count++;
 		tmp = tmp->next;
@@ -91,7 +91,7 @@ int	count_parameters(t_command *command)
 
 void	fill_params_array(char **params, t_command *command, int count)
 {
-	t_parameters	*tmp;
+	t_list	*tmp;
 	int				i;
 
 	if (!command)
@@ -101,10 +101,10 @@ void	fill_params_array(char **params, t_command *command, int count)
 	}
 	params[0] = command->command;
 	i = 1;
-	tmp = command->parameters_p;
-	while (tmp && tmp->parameter && i <= count)
+	tmp = command->contents_p;
+	while (tmp && tmp->content && i <= count)
 	{
-		params[i] = tmp->parameter;
+		params[i] = tmp->content;
 		i++;
 		tmp = tmp->next;
 	}

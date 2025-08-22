@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   append.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 19:06:02 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/19 13:57:43 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/22 22:29:25 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void append_command(t_shell *shell, char *str,int builtin, t_command **temp)
 		shell->command_p = malloc(sizeof(t_command));
 		shell->command_p->command = ft_strdup(str);
 		shell->command_p->next = NULL;
-		shell->command_p->parameters_p = NULL;
+		shell->command_p->contents_p = NULL;
 		shell->command_p->token = NULL;
 		shell->command_p->redirections = NULL;  // YENİ
 		shell->command_p->flag = 1;
@@ -44,7 +44,7 @@ void append_command(t_shell *shell, char *str,int builtin, t_command **temp)
 		(*temp)->next = malloc(sizeof(t_command));
 		(*temp)->next->command = ft_strdup(str);
 		(*temp)->next->next = NULL;
-		(*temp)->next->parameters_p = NULL;
+		(*temp)->next->contents_p = NULL;
 		(*temp)->next->token = NULL;
 		(*temp)->next->redirections = NULL;  // YENİ
 		(*temp)->next->token_flag = 0;
@@ -62,7 +62,7 @@ void append_command(t_shell *shell, char *str,int builtin, t_command **temp)
 			last->next = malloc(sizeof(t_command));
 			last->next->command = ft_strdup(str);
 			last->next->next = NULL;
-			last->next->parameters_p = NULL;
+			last->next->contents_p = NULL;
 			last->next->token = NULL;
 			last->next->redirections = NULL;  // YENİ
 			last->next->token_flag = 0;
@@ -72,13 +72,13 @@ void append_command(t_shell *shell, char *str,int builtin, t_command **temp)
 		}
 	}
 }
-void append_parameter(t_parameters *new_param, t_command **temp)
+void append_content(t_list *new_param, t_command **temp)
 {
-	if (!(*temp)->parameters_p)
-		(*temp)->parameters_p = new_param;
+	if (!(*temp)->contents_p)
+		(*temp)->contents_p = new_param;
 	else
 	{
-		t_parameters *p = (*temp)->parameters_p;
+		t_list *p = (*temp)->contents_p;
 		while (p->next)
 			p = p->next;
 		p->next = new_param;

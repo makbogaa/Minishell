@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   single_quote.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 10:36:58 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/19 15:14:55 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/22 22:29:25 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,18 +40,18 @@ char	*string_concatation_heap(char **str)
 
 static void single_quote_loop(t_quote *quote)
 {
-	quote->current_parameter = set_and_free(quote->current_parameter, readline("> "));
-	while(quote->current_parameter)
+	quote->current_content = set_and_free(quote->current_content, readline("> "));
+	while(quote->current_content)
 	{
 		quote->len++;
-		if(ft_strchr(quote->current_parameter, '\'') && counter_quote(quote->current_parameter, "'") % 2 == 1)
+		if(ft_strchr(quote->current_content, '\'') && counter_quote(quote->current_content, "'") % 2 == 1)
 		{
-			quote->parameters = copy_multiple_input(quote->parameters, quote->current_parameter, quote->len);
+			quote->contents = copy_multiple_input(quote->contents, quote->current_content, quote->len);
 			break;
 		}
-		quote->parameters = copy_multiple_input(quote->parameters, quote->current_parameter, quote->len);
-		quote->parameters = copy_multiple_input(quote->parameters, "\n", ++quote->len);
-		quote->current_parameter = set_and_free(quote->current_parameter, readline("> "));
+		quote->contents = copy_multiple_input(quote->contents, quote->current_content, quote->len);
+		quote->contents = copy_multiple_input(quote->contents, "\n", ++quote->len);
+		quote->current_content = set_and_free(quote->current_content, readline("> "));
 	}
 }
 
@@ -67,13 +67,13 @@ char *single_quote(char **prompt)
 	end = ft_strchr(start + 1, '\'');
 	if (!end)
 	{
-		quote->parameters = copy_multiple_input(quote->parameters, start + 1, ++quote->len);
-		quote->parameters = copy_multiple_input(quote->parameters, "\n", ++quote->len);
+		quote->contents = copy_multiple_input(quote->contents, start + 1, ++quote->len);
+		quote->contents = copy_multiple_input(quote->contents, "\n", ++quote->len);
 		single_quote_loop(quote);
 	}
 	if(quote->len > 0)
 	{
-		result = string_concatation_heap(quote->parameters);
+		result = string_concatation_heap(quote->contents);
 		result[ft_strlen(result) - 1] = '\0';
 		*prompt = start + ft_strlen(start);
 		free_quote(quote);
