@@ -12,14 +12,15 @@
 
 #include "../../minishell.h"
 
-static char	*expand_token_var(char *line, int *i, t_req *req)
+static char	*expand_token_var(char *line, int *i, t_req *req, int len)
 {
 	char	*var_name;
 	char	*var_value;
 	int		start;
-	int		len;
 	char	**envp;
 
+	if (line[*i] == '$')
+		(*i)++;
 	start = *i;
 	while (line[*i] && (ft_isalnum(line[*i]) || line[*i] == '_'))
 		(*i)++;
@@ -60,7 +61,7 @@ char	*expand_line(char *line, t_req *req, int i, char *expanded)
 	{
 		if (line[i] == '$')
 		{
-			tmp = expand_token_var(line, &i, req);
+			tmp = expand_token_var(line, &i, req, 0);
 			new_exp = ft_strjoin(expanded, tmp);
 			free(expanded);
 			free(tmp);
@@ -76,4 +77,41 @@ char	*expand_line(char *line, t_req *req, int i, char *expanded)
 		}
 	}
 	return (expanded);
+}
+
+static void	apply_file_descriptors(t_command *cmd)
+{
+	if (cmd->infile != -1)
+	{
+		dup2(cmd->infile, STDIN_FILENO);
+		close(cmd->infile);
+	}
+	if (cmd->outfile != -1)
+	{
+		dup2(cmd->outfile, STDOUT_FILENO);
+		close(cmd->outfile);
+	}
+}
+
+int	setup_redirections(t_command *cmd, t_shell *shell)
+{
+	t_req			req;
+	t_pipeline_data	data;
+
+	if (!cmd || !cmd->redirections)
+		return (0);
+	cmd->infile = -1;
+	cmd->outfile = -1;
+	req.exit_stat = 0;
+	req.heredoc_interrupted = 0;
+	req.shell = shell;
+	data.current_cmd = cmd;
+	data.req = &req;
+	if (apply_redirects(&data) != 0)
+	{
+		shell->last_exit_code = req.exit_stat;
+		return (-1);
+	}
+	apply_file_descriptors(cmd);
+	return (0);
 }

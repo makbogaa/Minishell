@@ -6,67 +6,45 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 15:37:57 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/25 16:15:22 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/25 17:16:47 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-static void	apply_file_descriptors(t_command *cmd)
+static t_redirect	*create_redir_node_from_token(t_list **content, char *str)
 {
-	if (cmd->infile != -1)
-	{
-		dup2(cmd->infile, STDIN_FILENO);
-		close(cmd->infile);
-	}
-	if (cmd->outfile != -1)
-	{
-		dup2(cmd->outfile, STDOUT_FILENO);
-		close(cmd->outfile);
-	}
-}
-
-int	setup_redirections(t_command *cmd, t_shell *shell)
-{
-	t_req			req;
-	t_pipeline_data	data;
-
-	if (!cmd || !cmd->redirections)
-		return (0);
-	cmd->infile = -1;
-	cmd->outfile = -1;
-	req.exit_stat = 0;
-	req.heredoc_interrupted = 0;
-	req.shell = shell;
-	data.current_cmd = cmd;
-	data.req = &req;
-	if (apply_redirects(&data) != 0)
-	{
-		shell->last_exit_code = req.exit_stat;
-		return (1);
-	}
-	apply_file_descriptors(cmd);
-	return (0);
+	if (!content || !*content || !(*content)->next)
+		return (NULL);
+	if (ft_strcmp(str, "<") == 0)
+		return (create_rdr_node(REDIRECT_IN, (*content)->next->content));
+	if (ft_strcmp(str, ">") == 0)
+		return (create_rdr_node(REDIRECT_OUT, (*content)->next->content));
+	if (ft_strcmp(str, ">>") == 0)
+		return (create_rdr_node(REDIRECT_APPEND, (*content)->next->content));
+	if (ft_strcmp(str, "<<") == 0)
+		return (create_rdr_node(REDIRECT_HEREDOC, (*content)->next->content));
+	return (NULL);
 }
 
 static int	handle_redirect_operator(t_command *cmd, t_list **content,
 	t_list *prev, char *str)
 {
 	t_redirect	*redir;
+	t_redirect	*tail;
 
-	redir = NULL;
-	if (ft_strcmp(str, "<") == 0 && (*content)->next)
-		redir = create_rdr_node(REDIRECT_IN, (*content)->next->content);
-	else if (ft_strcmp(str, ">") == 0 && (*content)->next)
-		redir = create_rdr_node(REDIRECT_OUT, (*content)->next->content);
-	else if (ft_strcmp(str, ">>") == 0 && (*content)->next)
-		redir = create_rdr_node(REDIRECT_APPEND, (*content)->next->content);
-	else if (ft_strcmp(str, "<<") == 0 && (*content)->next)
-		redir = create_rdr_node(REDIRECT_HEREDOC, (*content)->next->content);
+	redir = create_redir_node_from_token(content, str);
 	if (redir)
 	{
-		redir->next = cmd->redirections;
-		cmd->redirections = redir;
+		if (!cmd->redirections)
+			cmd->redirections = redir;
+		else
+		{
+			tail = cmd->redirections;
+			while (tail->next)
+				tail = tail->next;
+			tail->next = redir;
+		}
 		rm_rdr_tkns(content, prev, cmd);
 		return (1);
 	}
@@ -75,9 +53,9 @@ static int	handle_redirect_operator(t_command *cmd, t_list **content,
 
 static void	process_cmd_redirections(t_command *cmd)
 {
-	t_list	*content;
-	t_list	*prev;
-	char	*str;
+	t_list		*content;
+	t_list		*prev;
+	char		*str;
 
 	content = cmd->contents_p;
 	prev = NULL;
