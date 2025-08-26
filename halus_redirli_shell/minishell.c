@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:27 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/25 16:29:14 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/26 15:15:41 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	init_envp(t_shell *shell, char **envp, int i)
 	i = 0;
 	while (envp[i])
 	{
-		shell->envp[i] = strdup(envp[i]);
+		shell->envp[i] = ft_strdup(envp[i]);
 		if (!shell->envp[i])
 		{
 			perror("strdup");
@@ -97,8 +97,12 @@ int	main(int argc, char **argv, char **envp)
 	t_shell	shell;
 	int		exit_code;
 
-	(void)argc;
 	(void)argv;
+	if (argc != 1)
+	{
+		write(STDERR_FILENO, "Error: No arguments allowed\n", 28);
+		return (1);
+	}
 	ft_memset(&shell, 0, sizeof(t_shell));
 	init_shell(&shell, envp);
 	start_minishell(&shell);

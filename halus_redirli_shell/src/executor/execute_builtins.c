@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/16 22:10:03 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/25 16:15:22 by makboga          ###   ########.fr       */
+/*   Created: 2025/08/26 14:06:39 by makboga           #+#    #+#             */
+/*   Updated: 2025/08/26 15:10:58 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	handle_command_execution(t_shell *shell, char **params)
+static int	handle_command_execution(t_shell *shell, char **params)
 {
 	char	*cmd_name;
 	int		should_exit;

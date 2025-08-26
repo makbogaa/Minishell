@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/25 16:35:48 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/26 15:13:08 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,10 +142,7 @@ int				is_whitespace(char c);
 
 void			execute(t_shell *shell);
 void			execute_single_command(t_shell *shell);
-int				handle_command_execution(t_shell *shell, char **params);
 int				run(t_command *command, char **params, t_shell *shell);
-void			execute_commands(t_shell *shell, char **commands, int n);
-int				has_slash(const char *s);
 void			close_and_free_pipes(int *pipefds, int n);
 
 void			free_argv(char **argv);
@@ -182,23 +179,15 @@ char			**ft_double_extension(char **matrix, char *new_str);
 void			increment_shlvl(t_shell *shell);
 
 void			execute(t_shell *shell);
-void			execute_main(t_shell *shell);
-void			handle_pipe_commands(t_shell *shell);
 int				has_pipe_outside_quotes(char *str);
-void			fork_and_execute(t_shell *shell, char **commands, int n,
-					int *pipefds);
 
 char			*get_path(char *cmd, char **envp);
-void			execute_commands(t_shell *shell, char **commands, int n);
 void			cleanup_and_wait(int *pipefds, int n, pid_t last_pid,
 					t_shell *shell);
-void			execute_child_process(t_shell *shell, char *command,
-					t_pipe_info pipe_info);
 
 int				handle_builtin_command(t_shell *shell, char **params,
 					char *cmd_name);
 char			**get_params(t_command *command);
-int				handle_command_execution(t_shell *shell, char **params);
 void			handle_single_command_exec(t_shell *shell);
 void			execute_single_command(t_shell *shell);
 

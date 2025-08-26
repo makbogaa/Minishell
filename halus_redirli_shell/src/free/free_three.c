@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 16:59:38 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/25 16:26:17 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/26 14:53:56 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,6 @@ void	free_quote(t_quote *quote)
 	free(quote->current_content);
 	free_multiple_input(quote->contents);
 	free(quote);
-}
-
-void	free_contents(t_list *params)
-{
-	t_list	*temp;
-
-	while (params)
-	{
-		temp = params;
-		params = params->next;
-		free(temp->content);
-		free(temp);
-	}
 }
 
 void	free_redirections(t_redirect *redirections)

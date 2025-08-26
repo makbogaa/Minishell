@@ -6,13 +6,13 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 15:01:49 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/25 16:16:43 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/26 15:13:12 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	has_slash(const char *s)
+static int	has_slash(const char *s)
 {
 	return (ft_strchr(s, '/') != NULL);
 }
@@ -54,6 +54,7 @@ static int	handle_regular_command(t_command *cmd, char **args, t_shell *sh)
 	{
 		write(STDERR_FILENO, cmd->command, ft_strlen(cmd->command));
 		write(STDERR_FILENO, ": command not found\n", 20);
+		free_shell(sh);
 		exit(127);
 	}
 	if (!cmd->command[0])

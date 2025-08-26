@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/30 16:59:51 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/19 16:49:18 by makboga          ###   ########.fr       */
+/*   Created: 2025/08/26 14:06:55 by makboga           #+#    #+#             */
+/*   Updated: 2025/08/26 14:06:57 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,17 +71,6 @@ char	*get_path(char *cmd, char **envp)
 	result = check_path_in_dirs(paths, cmd);
 	ft_free_split(paths);
 	return (result);
-}
-
-void	execute_commands(t_shell *shell, char **commands, int n)
-{
-	int	*pipefds;
-
-	if (n < 2)
-		return ;
-	if (create_pipes(&pipefds, n) == -1)
-		return ;
-	fork_and_execute(shell, commands, n, pipefds);
 }
 
 void	cleanup_and_wait(int *pipefds, int n, pid_t last_pid, t_shell *shell)
