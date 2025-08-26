@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/26 19:00:25 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/26 22:40:33 by haloztur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,9 +257,6 @@ void			exit_with_error(char *msg);
 int				apply_redirects(t_pipeline_data *data);
 void			heredoc_sigint_handler(int sig);
 char			*expand_line(char *line, t_req *req, int i, char *expanded);
-void			handle_heredoc_line(char *line, const char *delimiter,
-					int pipe_fd[2], t_req *req);
-void			free_cmd(t_command *cmd);
 void			free_req(t_req *req);
 int				handle_heredoc(const char *delimiter, t_req *req);
 

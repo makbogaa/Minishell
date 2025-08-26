@@ -20,19 +20,6 @@ void	clean_exit(int pipe_fd, char *delim_copy, t_req *req, int exit_code)
 	exit(exit_code);
 }
 
-void	free_cmd(t_command *cmd)
-{
-	if (!cmd)
-		return ;
-	if (cmd->command)
-		free(cmd->command);
-	if (cmd->token)
-		free(cmd->token);
-	free_redirections(cmd->redirections);
-	if (cmd->contents_p)
-		cmd->contents_p = NULL;
-}
-
 void	free_req(t_req *req)
 {
 	if (!req)
