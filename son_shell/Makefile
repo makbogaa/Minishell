@@ -17,7 +17,6 @@ SRCS = minishell.c\
 		src/redirection/heredoc_handler.c \
 		src/redirection/redirect_utils.c \
 		src/redirection/expand_token_var.c \
-		src/redirection/memory_utils.c \
 		src/redirection/redirect_clean.c \
 		src/builtin/builtin.c \
 		src/builtin/env.c \

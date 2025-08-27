@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 14:06:59 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/26 17:29:17 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/27 17:13:43 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,12 @@ static void	execute_child_process(t_shell *shell, char *command,
 		}
 	}
 	execute_single_command(&tmp_shell);
-	free_command(&tmp_shell);
-	if (tmp_shell.prompt)
-		free(tmp_shell.prompt);
+	free_shell(&tmp_shell);
+	free(pipe_info.pipefds);
+	free(command);
+	// free_command(&tmp_shell);
+	// if (tmp_shell.prompt)
+	// 	free(tmp_shell.prompt);
 	exit(tmp_shell.last_exit_code);
 }
 
@@ -49,6 +52,7 @@ static void	fork_and_exec(t_shell *shell, char **commands, int n, int *pipefds)
 	t_pipe_info	pipe_info;
 
 	i = 0;
+	ignore_signals();
 	while (i < n)
 	{
 		pids[i] = fork();

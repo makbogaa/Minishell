@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haloztur <haloztur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/26 22:40:33 by haloztur         ###   ########.fr       */
+/*   Updated: 2025/08/27 16:20:26 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,14 @@ typedef enum e_redirect_type
 	REDIRECT_OUT,
 	REDIRECT_APPEND,
 	REDIRECT_HEREDOC
-}t_redirect_type;
+}	t_redirect_type;
 
 typedef struct s_pipe_info
 {
 	int	*pipefds;
 	int	n;
 	int	i;
-}t_pipe_info;
+}	t_pipe_info;
 
 typedef struct s_redirect
 {
@@ -64,14 +64,14 @@ typedef struct s_redirect
 	char				*filename;
 	int					fd;
 	struct s_redirect	*next;
-}t_redirect;
+}	t_redirect;
 
 typedef struct s_req
 {
 	int				exit_stat;
 	int				heredoc_interrupted;
 	struct s_shell	*shell;
-}t_req;
+}	t_req;
 
 typedef struct s_parameters
 {
@@ -92,13 +92,13 @@ typedef struct s_command
 	int					outfile;
 	struct s_parameters	*parameters_p;
 	struct s_command	*next;
-}t_command;
+}	t_command;
 
 typedef struct s_pipeline_data
 {
 	t_command	*current_cmd;
 	t_req		*req;
-}t_pipeline_data;
+}	t_pipeline_data;
 
 typedef struct s_shell
 {
@@ -114,7 +114,7 @@ typedef struct s_shell
 	int			is_quote;
 	char		**options;
 	t_command	*command_p;
-}t_shell;
+}	t_shell;
 
 typedef struct s_quote
 {
@@ -122,7 +122,7 @@ typedef struct s_quote
 	char	*current_content;
 	int		flag;
 	int		len;
-}t_quote;
+}	t_quote;
 
 typedef struct s_parse
 {
@@ -142,7 +142,7 @@ typedef struct s_read_file_info
 	int		b_read;
 	int		total_b_read;
 	char	*result;
-}t_read_file;
+}	t_read_file;
 
 void			init_shell(t_shell *shell, char **envp);
 void			start_minishell(t_shell *shell);
@@ -257,7 +257,8 @@ void			exit_with_error(char *msg);
 int				apply_redirects(t_pipeline_data *data);
 void			heredoc_sigint_handler(int sig);
 char			*expand_line(char *line, t_req *req, int i, char *expanded);
-void			free_req(t_req *req);
+void			handle_heredoc_line(char *line, const char *delimiter,
+					int pipe_fd[2], t_req *req);
 int				handle_heredoc(const char *delimiter, t_req *req);
 
 void			rm_rdr_tkns(t_list **content, t_list *prev, t_command *cmd);

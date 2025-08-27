@@ -6,7 +6,7 @@
 /*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 20:07:25 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/21 20:46:58 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/26 19:26:42 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ char	*double_quote_control(char **prompt, t_shell *shell)
 
 	shell->is_quote = 1;
 	result = double_quote(prompt, shell);
-	while (**prompt && **prompt != ' ')
+	while (**prompt && !ft_isspace(**prompt))
 	{
 		if (**prompt == '"' && *(*prompt + 1) != '"')
 		{

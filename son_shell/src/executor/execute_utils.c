@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 14:06:55 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/26 14:06:57 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/26 22:48:41 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,8 @@ void	cleanup_and_wait(int *pipefds, int n, pid_t last_pid, t_shell *shell)
 		waitpid(last_pid, &status, 0);
 		if (WIFEXITED(status))
 			shell->last_exit_code = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			shell->last_exit_code = 128 + WTERMSIG(status);
 	}
 	i = 0;
 	while (i < n - 1)

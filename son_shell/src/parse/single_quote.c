@@ -6,7 +6,7 @@
 /*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 10:36:58 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/19 02:53:55 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/26 19:27:10 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ char	*single_quote_control(char **prompt, t_shell *shell)
 
 	shell->is_quote = 1;
 	result = single_quote(prompt, shell);
-	while (**prompt && **prompt != ' ')
+	while (**prompt && !ft_isspace(**prompt))
 	{
 		if (**prompt == '\'' && *(*prompt + 1) != '\'')
 		{

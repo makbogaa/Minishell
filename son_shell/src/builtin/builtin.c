@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 15:01:49 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/26 15:13:12 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/26 22:48:31 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ int	run(t_command *cmd, char **args, t_shell *sh)
 	pid = fork();
 	if (pid == 0)
 	{
+		child_signal();
 		if (has_slash(cmd->command))
 			handle_slash_command(cmd, args, sh);
 		else
@@ -83,8 +84,12 @@ int	run(t_command *cmd, char **args, t_shell *sh)
 		perror("fork");
 		return (-1);
 	}
+	ignore_signals();
 	waitpid(pid, &status, 0);
+	parent_signal();
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
+	else if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
 	return (1);
 }

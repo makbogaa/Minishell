@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/26 04:30:54 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/27 17:05:02 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,24 @@ static void	handle_token_command(t_shell *shell, char *str,
 	t_command **temp, int *command)
 {
 	if (!*command)
-		(append_command(shell, "", 0, temp), *command = 1);
+	{
+		if (ft_strcmp(str, "<") == 0 || ft_strcmp(str, "<<") == 0)
+		{
+			(append_command(shell, "cat", 0, temp), *command = 1);
+			if (*temp)
+				append_parameter(temp, str);
+			return ;
+		}
+		else if (ft_strcmp(str, ">") == 0 || ft_strcmp(str, ">>") == 0)
+		{
+			(append_command(shell, "cat", 0, temp), *command = 1);
+			if (*temp)
+				append_parameter(temp, str);
+			return ;
+		}
+		else
+			(append_command(shell, "", 0, temp), *command = 1);
+	}
 	if (*temp)
 		append_parameter(temp, str);
 }
@@ -40,8 +57,8 @@ void	append(t_shell *shell, char *str, int *command, t_command **temp)
 		return ;
 	result = prompt_type_control_loop(shell->builtin, 1, str);
 	token_result = prompt_type_control_loop(shell->tokens, 0, str);
-	if (ft_strlen(str) == 0)
-		return ;
+	if (token_result == 4)
+		handle_token_command(shell, str, temp, command);
 	else if (!*command && (result == 1 || result == 2 || result == 3))
 	{
 		handle_builtin_append(shell, str, temp);
