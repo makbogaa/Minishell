@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 22:24:27 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/26 04:20:50 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/27 19:30:17 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,12 +88,14 @@ char	*get_characters(char **prompt, t_shell *shell)
 	result = NULL;
 	i = 0;
 	while ((*prompt)[i] && !ft_isspace((*prompt)[i]) &&
-		(*prompt)[i] != '\'' && (*prompt)[i] != '"')
+		(*prompt)[i] != '\'' && (*prompt)[i] != '"' && !ft_ismeta(*prompt, i))
 	{
 		tmp = process_character_at_index(prompt, &i, shell);
 		if (tmp)
 			result = append_to_result(result, tmp);
 	}
 	*prompt += i;
+	if(!result)
+		return (ft_strdup(""));
 	return (re_control(tmp, result, prompt, shell));
 }

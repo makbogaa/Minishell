@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   single_quote.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 10:36:58 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/26 19:27:10 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/27 20:24:00 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ char	*single_quote_control(char **prompt, t_shell *shell)
 
 	shell->is_quote = 1;
 	result = single_quote(prompt, shell);
-	while (**prompt && !ft_isspace(**prompt))
+	while (**prompt && !ft_isspace(**prompt) && !ft_ismeta(*prompt, 0))
 	{
 		if (**prompt == '\'' && *(*prompt + 1) != '\'')
 		{
@@ -58,5 +58,7 @@ char	*single_quote_control(char **prompt, t_shell *shell)
 		else
 			re_call(shell, &result, prompt, get_characters);
 	}
+	if(result == NULL)
+		return (ft_strdup(""));
 	return (result);
 }
