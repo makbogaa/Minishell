@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 15:37:57 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/25 17:44:10 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/28 13:28:57 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,5 +80,20 @@ void	process_redirections(t_shell *shell)
 	{
 		process_cmd_redirections(cmd);
 		cmd = cmd->next;
+	}
+}
+
+void	setup_heredoc_tty(int *saved_stdin, int *saved_stdout)
+{
+	int	tty_fd;
+
+	*saved_stdin = dup(STDIN_FILENO);
+	*saved_stdout = dup(STDOUT_FILENO);
+	tty_fd = open("/dev/tty", O_RDWR);
+	if (tty_fd != -1)
+	{
+		dup2(tty_fd, STDIN_FILENO);
+		dup2(tty_fd, STDOUT_FILENO);
+		close(tty_fd);
 	}
 }

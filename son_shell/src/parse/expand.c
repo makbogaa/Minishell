@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 22:24:27 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/28 04:24:42 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/28 13:03:14 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,19 @@ static int	find_var_end(const char *str, int start)
 	return (j);
 }
 
-static char	*extract_and_expand_var(const char *str, int start, int end)
+static char	*extract_and_expand_var(const char *str, int start, int end,
+	t_shell *shell)
 {
 	char	*expand_value;
 	char	*expanded;
+	char	*val;
 
 	expand_value = ft_strndup(str + start, end - start);
 	if (!expand_value)
 		return (ft_strdup(""));
-	if (getenv(expand_value))
-		expanded = ft_strdup(getenv(expand_value));
+	val = mini_getenv(expand_value, shell->envp);
+	if (val)
+		expanded = ft_strdup(val);
 	else
 		expanded = ft_strdup("");
 	free(expand_value);
@@ -74,7 +77,7 @@ char	*expand_if_dollar(const char *str, int *i, t_shell *shell)
 		return (ft_strdup("$"));
 	}
 	j = find_var_end(str, j);
-	result = extract_and_expand_var(str, *i + 1, j);
+	result = extract_and_expand_var(str, *i + 1, j, shell);
 	*i = j;
 	return (result);
 }

@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 14:41:48 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/27 15:35:14 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/28 13:28:35 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ static void	heredoc_read_loop(char *delim_copy, int pipe_fd[2], t_req *req)
 static void	do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 {
 	char	*delim_copy;
+	int		saved_stdin;
+	int		saved_stdout;
 
 	close(pipe_fd[0]);
 	delim_copy = ft_strdup(delimiter);
@@ -49,7 +51,18 @@ static void	do_heredoc_child(const char *delimiter, int pipe_fd[2], t_req *req)
 		close(pipe_fd[1]);
 		exit(1);
 	}
+	setup_heredoc_tty(&saved_stdin, &saved_stdout);
 	heredoc_read_loop(delim_copy, pipe_fd, req);
+	if (saved_stdin != -1)
+	{
+		dup2(saved_stdin, STDIN_FILENO);
+		close(saved_stdin);
+	}
+	if (saved_stdout != -1)
+	{
+		dup2(saved_stdout, STDOUT_FILENO);
+		close(saved_stdout);
+	}
 }
 
 static int	start_heredoc_process(const char *delimiter,

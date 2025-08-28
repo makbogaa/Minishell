@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/28 05:56:47 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/28 13:29:17 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,5 +268,6 @@ int				handle_output_rdr(t_redirect *redir, int *last_out, t_req *req);
 int				open_redirect_file(char *filename, t_redirect_type type,
 					t_req *req, int fd);
 void			process_heredoc_line(char *line, int pipe_fd, t_req *req);
+void			setup_heredoc_tty(int *saved_stdin, int *saved_stdout);
 
 #endif
