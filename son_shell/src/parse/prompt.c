@@ -6,7 +6,7 @@
 /*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 04:30:00 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/28 05:00:24 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/28 05:18:17 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ int	get_prompt(t_shell *shell)
 	}
 	if (shell->prompt && *shell->prompt)
 	{
-		parse_prompt(shell);
+		if (!has_pipe_outside_quotes(shell->prompt))
+			parse_prompt(shell);
 		add_history(shell->prompt);
 	}
 	else

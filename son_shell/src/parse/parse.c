@@ -6,7 +6,7 @@
 /*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/28 04:53:48 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/28 06:06:14 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	append(t_shell *shell, char *str, int *command, t_command **temp)
 	int	result;
 	int	token_result;
 
-	if (!str || !shell)
+	if (!str || !shell || !str[0])
 		return ;
 	result = prompt_type_control_loop(shell->builtin, 1, str);
 	token_result = prompt_type_control_loop(shell->tokens, 0, str);
