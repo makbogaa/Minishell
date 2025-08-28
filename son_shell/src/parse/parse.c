@@ -6,7 +6,7 @@
 /*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/28 04:05:20 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/28 04:53:48 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,12 @@ void	append(t_shell *shell, char *str, int *command, t_command **temp)
 	token_result = prompt_type_control_loop(shell->tokens, 0, str);
 	if (token_result == 4)
 		handle_token_command(shell, str, temp, command);
+	else if (!*command && (str[0] == '>' || str[0] == '<'))
+	{
+		append_command(shell, "cat", 0, temp);
+		*command = 1;
+		append_parameter(temp, str);
+	}
 	else if (!*command && (result == 1 || result == 2 || result == 3))
 	{
 		handle_builtin_append(shell, str, temp);
