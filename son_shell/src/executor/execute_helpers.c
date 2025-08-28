@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_helpers.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 14:06:45 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/28 05:56:56 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/28 13:51:41 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	handle_builtin_command(t_shell *shell, char **params, char *cmd_name)
 	if (ft_strcmp(cmd_name, "echo") == 0)
 		shell->last_exit_code = builtin_echo(params);
 	else if (ft_strcmp(cmd_name, "pwd") == 0)
-		shell->last_exit_code = builtin_pwd(params);
+		shell->last_exit_code = builtin_pwd(shell, params);
 	else if (ft_strcmp(cmd_name, "exit") == 0)
 	{
 		shell->last_exit_code = builtin_exit(shell, params,

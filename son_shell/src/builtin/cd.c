@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 16:08:25 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/28 05:57:17 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/28 19:08:06 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int	builtin_cd(t_shell *shell, char **args)
 		return (write(2, "cd: No such file or directory\n", 30), 1);
 	}
 	update_pwd_vars(shell, oldpwd);
+	get_display_info(shell);
 	if (should_free_expanded)
 		free(newpwd);
 	free(oldpwd);

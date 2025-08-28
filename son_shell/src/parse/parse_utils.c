@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
+/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 16:03:40 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/28 04:05:29 by mdalkili         ###   ########.fr       */
+/*   Updated: 2025/08/28 15:03:10 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,26 +43,31 @@ int	prompt_type_control_loop(char **control_list, int type, char *str)
 
 char	*re_control(char *tmp, char *result, char **prompt, t_shell *shell)
 {
+	char	*part;
+
 	if (**prompt == '\'')
 	{
+		part = single_quote_control(prompt, shell);
 		tmp = result;
-		result = ft_strjoin(tmp, single_quote_control(prompt, shell));
-		if (tmp)
-			free(tmp);
+		result = ft_strjoin_free(tmp, part);
+		if (part)
+			free(part);
 	}
 	else if (**prompt == '"')
 	{
+		part = double_quote_control(prompt, shell);
 		tmp = result;
-		result = ft_strjoin(tmp, double_quote_control(prompt, shell));
-		if (tmp)
-			free(tmp);
+		result = ft_strjoin_free(tmp, part);
+		if (part)
+			free(part);
 	}
-	else if (**prompt && !ft_isspace(**prompt))
+	else if (*prompt && !ft_isspace(**prompt))
 	{
+		part = get_characters(prompt, shell);
 		tmp = result;
-		result = ft_strjoin(tmp, get_characters(prompt, shell));
-		if (tmp)
-			free(tmp);
+		result = ft_strjoin_free(tmp, part);
+		if (part)
+			free(part);
 	}
 	if (result == NULL)
 		return (ft_strdup(""));

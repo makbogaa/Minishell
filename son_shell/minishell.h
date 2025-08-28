@@ -6,7 +6,7 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/28 13:29:17 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/28 13:51:11 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,7 @@ int				builtin_cd(t_shell *shell, char **args);
 int				update_pwd_vars(t_shell *shell, char *oldpwd);
 char			*get_target_directory(t_shell *shell, char **args,
 					int *should_free);
-int				builtin_pwd(char **args);
+int				builtin_pwd(t_shell *shell, char **args);
 int				builtin_env(char **params, char **envp);
 int				builtin_export(t_shell *shell, char **args);
 int				builtin_unset(t_shell *shell, char *name);
