@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 22:24:27 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/27 19:30:17 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/28 04:24:42 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ char	*get_characters(char **prompt, t_shell *shell)
 			result = append_to_result(result, tmp);
 	}
 	*prompt += i;
-	if(!result)
+	if (!result)
 		return (ft_strdup(""));
-	return (re_control(tmp, result, prompt, shell));
+	return (re_control(NULL, result, prompt, shell));
 }

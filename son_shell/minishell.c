@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:27 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/26 17:27:11 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/28 04:21:15 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,11 +90,14 @@ void	start_minishell(t_shell *shell)
 				free_command(shell);
 			break ;
 		}
-		if (!shell->parse_error && shell->command_p)
+		if (!shell->parse_error)
 		{
 			execute(shell);
-			free_command(shell);
-			shell->command_p = NULL;
+			if (shell->command_p)
+			{
+				free_command(shell);
+				shell->command_p = NULL;
+			}
 		}
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   double_quote.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 20:07:25 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/27 20:23:05 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/28 04:24:27 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,16 +83,13 @@ char	*double_quote_control(char **prompt, t_shell *shell)
 	result = double_quote(prompt, shell);
 	while (**prompt && !ft_isspace(**prompt) && !ft_ismeta(*prompt, 0))
 	{
+		if ((**prompt == '\'' && *(*prompt + 1) != '\'')
+			|| (**prompt == '"' && *(*prompt + 1) != '"'))
+			shell->is_quote = 1;
 		if (**prompt == '"' && *(*prompt + 1) != '"')
-		{
-			shell->is_quote = 1;
 			re_call(shell, &result, prompt, double_quote_control);
-		}
 		else if (**prompt == '\'' && *(*prompt + 1) != '\'')
-		{
-			shell->is_quote = 1;
 			re_call(shell, &result, prompt, single_quote_control);
-		}
 		else if (**prompt == '"' && *(*prompt + 1) == '"')
 			*prompt += 2;
 		else if (**prompt == '\'' && *(*prompt + 1) == '\'')
@@ -100,7 +97,7 @@ char	*double_quote_control(char **prompt, t_shell *shell)
 		else
 			re_call(shell, &result, prompt, get_characters);
 	}
-	if(result == NULL)
+	if (result == NULL)
 		return (ft_strdup(""));
 	return (result);
 }
