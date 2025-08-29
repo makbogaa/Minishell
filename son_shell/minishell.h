@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:10:07 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/28 13:51:11 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/29 04:53:43 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,6 +165,9 @@ char			*get_characters(char **prompt, t_shell *shell);
 char			*get_redirect_operator(char **prompt, t_shell *shell);
 char			*expand_if_dollar(const char *str, int *i, t_shell *shell);
 char			*get_next_char(const char *str, int *i);
+char			*process_character_at_index(char **prompt, int *i,
+					t_shell *shell, int context);
+int				is_heredoc_context(t_shell *shell);
 void			append(t_shell *shell, char *str, int *command,
 					t_command **temp);
 void			append_command(t_shell *shell, char *str,
@@ -175,8 +178,7 @@ int				prompt_type_control_loop(char **control_list,
 					int type, char *str);
 int				run_parse(t_parse *parse, t_shell *shell);
 void			reset_parse(t_parse *parse, t_shell *shell);
-char			*process_character_at_index(char **prompt,
-					int *i, t_shell *shell);
+
 void			pipe_syntax_error(t_shell *shell, t_parse *parse);
 
 void			parent_signal(void);

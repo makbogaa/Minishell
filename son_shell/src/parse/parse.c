@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 07:09:35 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/28 12:50:39 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/29 03:22:11 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,15 +51,13 @@ static void	handle_token_command(t_shell *shell, char *str,
 void	append(t_shell *shell, char *str, int *command, t_command **temp)
 {
 	int	result;
-	int	token_result;
 
 	if (!str || !shell)
 		return ;
 	if (!*command && str[0] == '\0')
 		return ;
 	result = prompt_type_control_loop(shell->builtin, 1, str);
-	token_result = prompt_type_control_loop(shell->tokens, 0, str);
-	if (token_result == 4)
+	if (prompt_type_control_loop(shell->tokens, 0, str) == 4)
 		handle_token_command(shell, str, temp, command);
 	else if (!*command && (str[0] == '>' || str[0] == '<'))
 	{
@@ -72,7 +70,7 @@ void	append(t_shell *shell, char *str, int *command, t_command **temp)
 		handle_builtin_append(shell, str, temp);
 		*command = 1;
 	}
-	else if (token_result == 4)
+	else if (prompt_type_control_loop(shell->tokens, 0, str))
 		handle_token_command(shell, str, temp, command);
 	else
 		append_parameter(temp, str);

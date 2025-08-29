@@ -6,49 +6,56 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 13:40:00 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/25 16:18:42 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/29 16:31:21 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-static char	*create_env_entry(const char *key, const char *value)
+static char	*extract_var_name(const char *arg)
 {
-	char	*temp;
-	char	*new_entry;
+	char	*equal_pos;
 
-	temp = ft_strjoin(key, "=");
-	if (!temp)
-		return (NULL);
-	new_entry = ft_strjoin(temp, value);
-	free(temp);
-	return (new_entry);
+	equal_pos = ft_strchr(arg, '=');
+	if (equal_pos)
+		return (ft_substr(arg, 0, equal_pos - arg));
+	else
+		return (ft_strdup(arg));
 }
 
-static int	update_env_var(char ***envp, const char *key, const char *value)
+static int	find_export_var_index(char **envp, const char *var_name)
 {
 	int		i;
-	int		key_len;
-	char	*new_entry;
+	char	*current_name;
+	char	*equal_pos;
 
-	if (!envp || !*envp || !key || !value)
-		return (0);
+	if (!envp || !var_name)
+		return (-1);
 	i = 0;
-	key_len = ft_strlen(key);
-	while ((*envp)[i])
+	while (envp[i])
 	{
-		if (!ft_strncmp((*envp)[i], key, key_len) && (*envp)[i][key_len] == '=')
+		equal_pos = ft_strchr(envp[i], '=');
+		if (equal_pos)
 		{
-			free((*envp)[i]);
-			new_entry = create_env_entry(key, value);
-			if (!new_entry)
-				return (0);
-			(*envp)[i] = new_entry;
-			return (1);
+			current_name = ft_substr(envp[i], 0, equal_pos - envp[i]);
+			if (current_name && ft_strcmp(current_name, (char *)var_name) == 0)
+			{
+				free(current_name);
+				return (i);
+			}
+			free(current_name);
 		}
 		i++;
 	}
-	return (0);
+	return (-1);
+}
+
+static void	update_export_var(char ***envp, int index, const char *new_entry)
+{
+	if (!envp || !*envp || index < 0 || !new_entry)
+		return ;
+	free((*envp)[index]);
+	(*envp)[index] = ft_strdup(new_entry);
 }
 
 static void	add_env_var(char ***envp, const char *key_value)
@@ -79,22 +86,27 @@ static void	add_env_var(char ***envp, const char *key_value)
 
 int	export_single_var(char ***envp, char *arg)
 {
-	char	*equal_pos;
-	char	*key;
+	char	*var_name;
+	char	*marked_arg;
+	int		existing_index;
 
 	if (!envp || !*envp || !arg)
 		return (1);
-	equal_pos = ft_strchr(arg, '=');
-	if (equal_pos)
-	{
-		key = ft_substr(arg, 0, equal_pos - arg);
-		if (!key)
-			return (1);
-		if (!update_env_var(envp, key, equal_pos + 1))
-			add_env_var(envp, arg);
-		free(key);
-	}
+	var_name = extract_var_name(arg);
+	if (!var_name)
+		return (1);
+	if (!ft_strchr(arg, '='))
+		marked_arg = ft_strjoin(arg, "=__EXPORT_ONLY__");
 	else
-		add_env_var(envp, arg);
+		marked_arg = ft_strdup(arg);
+	if (!marked_arg)
+		return (free(var_name), 1);
+	existing_index = find_export_var_index(*envp, var_name);
+	if (existing_index >= 0)
+		update_export_var(envp, existing_index, marked_arg);
+	else
+		add_env_var(envp, marked_arg);
+	free(var_name);
+	free(marked_arg);
 	return (0);
 }

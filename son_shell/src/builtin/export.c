@@ -6,25 +6,11 @@
 /*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:53:24 by makboga           #+#    #+#             */
-/*   Updated: 2025/08/19 13:25:33 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/29 15:57:03 by makboga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-void	print_export_list(char **export_arr, int fd)
-{
-	int	i;
-
-	i = 0;
-	if (!export_arr)
-		return ;
-	while (export_arr[i])
-	{
-		ft_putstr_fd("declare -x ", fd);
-		ft_putendl_fd(export_arr[i++], fd);
-	}
-}
 
 void	sort_export_list(char **export_arr)
 {

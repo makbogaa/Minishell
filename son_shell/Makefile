@@ -27,6 +27,7 @@ SRCS = minishell.c\
 		src/builtin/exit.c \
 		src/builtin/export.c \
 		src/builtin/export_utils.c \
+		src/builtin/export_utils2.c \
 		src/builtin/unset.c \
 		src/free/free.c \
 		src/free/free_two.c \

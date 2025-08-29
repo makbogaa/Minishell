@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: makboga <makboga@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mdalkili <mdalkilic344@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 22:24:27 by mdalkili          #+#    #+#             */
-/*   Updated: 2025/08/28 13:03:14 by makboga          ###   ########.fr       */
+/*   Updated: 2025/08/29 04:17:03 by mdalkili         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,13 +87,18 @@ char	*get_characters(char **prompt, t_shell *shell)
 	char	*result;
 	char	*tmp;
 	int		i;
+	int		context;
 
 	result = NULL;
 	i = 0;
+	if (is_heredoc_context(shell))
+		context = 1;
+	else
+		context = 0;
 	while ((*prompt)[i] && !ft_isspace((*prompt)[i]) &&
 		(*prompt)[i] != '\'' && (*prompt)[i] != '"' && !ft_ismeta(*prompt, i))
 	{
-		tmp = process_character_at_index(prompt, &i, shell);
+		tmp = process_character_at_index(prompt, &i, shell, context);
 		if (tmp)
 			result = append_to_result(result, tmp);
 	}
